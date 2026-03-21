@@ -1,4 +1,7 @@
 {
   "language": "ru",
-  "theme": "dark"
+  "statusLine": {
+    "type": "command",
+    "command": ["node", "~/.claude/statusline.js"]
+  }
 }

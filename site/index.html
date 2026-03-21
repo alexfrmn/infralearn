@@ -544,7 +544,7 @@ EOF</code></pre>
   <div class="code-wrapper">
     <span class="code-lang">bash</span>
     <button class="copy-btn">Копировать</button>
-    <pre><code class="language-bash">claude mcp add filesystem -- npx -y @anthropic-ai/mcp-filesystem /opt/workspace</code></pre>
+    <pre><code class="language-bash">claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem /opt/workspace</code></pre>
   </div>
   <p>Даёт Claude Code прямой доступ к файлам в <code>/opt/workspace</code>: чтение, запись, поиск, создание директорий.</p>
 
@@ -1018,7 +1018,7 @@ codex
 claude mcp add memory -- npx -y @modelcontextprotocol/server-memory
 
 # Файловая система
-claude mcp add filesystem -- npx -y @anthropic-ai/mcp-filesystem /opt/workspace
+claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem /opt/workspace
 
 # GitHub
 claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=ghp_YOUR_TOKEN \
@@ -1140,7 +1140,7 @@ tmux ls               # список сессий
         <button class="copy-btn">Копировать</button>
         <pre><code class="language-bash"># Вместо npx — глобальная установка
 npm install -g @modelcontextprotocol/server-memory
-npm install -g @anthropic-ai/mcp-filesystem
+npm install -g @modelcontextprotocol/server-filesystem
 npm install -g @modelcontextprotocol/server-github</code></pre>
       </div>
       <p>Затем в <code>claude mcp add</code> используйте прямой путь к бинарнику вместо <code>npx</code>.</p>

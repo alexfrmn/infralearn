@@ -6,7 +6,7 @@
     },
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@anthropic-ai/mcp-filesystem", "/opt/workspace"]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/opt/workspace"]
     },
     "github": {
       "command": "npx",
