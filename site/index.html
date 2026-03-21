@@ -886,36 +886,44 @@ chmod +x ~/.claude/hooks/*.sh</code></pre>
     <pre><code class="language-bash">cp /opt/workspace/infralearn/configs/settings.local.json ~/.claude/settings.local.json</code></pre>
   </div>
 
-  <p>Файл <code>settings.local.json</code> описывает, какие хуки запускать и когда. Пример структуры:</p>
+  <p>Файл <code>settings.local.json</code> описывает, какие хуки запускать и когда. Вот что внутри:</p>
+  <div class="callout danger">
+    <div class="callout-title">Важно: только абсолютные пути!</div>
+    <p>В хуках ВСЕГДА используйте <code>/root/.claude/hooks/</code>, а НЕ <code>~/.claude/hooks/</code>. Тильда ломается при работе из разных директорий.</p>
+  </div>
   <div class="code-wrapper">
     <span class="code-lang">json</span>
     <button class="copy-btn">Копировать</button>
     <pre><code class="language-json">{
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/root/.claude/hooks/pre-bash.sh"
-          }
-        ]
-      }
-    ],
-    "Notification": [
+    "SessionStart": [
       {
         "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "/root/.claude/hooks/notify.sh"
+            "command": "bash /root/.claude/hooks/session-start.sh"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /root/.claude/hooks/session-end.sh"
           }
         ]
       }
     ]
   }
 }</code></pre>
+  </div>
+  <div class="callout info">
+    <div class="callout-title">Структура хука</div>
+    <p>Каждый хук: <strong>событие</strong> (SessionStart, SessionEnd, PreToolUse...) → <strong>matcher</strong> (фильтр, пустая строка = все) → <strong>hooks</strong> массив с командами. Обязательно вложенная структура с <code>matcher</code> + <code>hooks</code>!</p>
   </div>
 
   <h2>Шаг 3. Проверяем</h2>
