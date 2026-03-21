@@ -818,6 +818,82 @@ openclaw start</code></pre>
     <p>OpenClaw требует активную подписку Claude. Убедитесь, что Claude Code работает на сервере перед настройкой OpenClaw.</p>
   </div>
 
+  <h2>Upload2Server — передача файлов через Telegram</h2>
+  <p>Telegram-бот, который принимает файлы и сохраняет их на сервере. Удобно для скриншотов, документов, конфигов — кинул в чат, и оно на сервере.</p>
+
+  <h3>Шаг 1: Создаём бота</h3>
+  <ol>
+    <li>Откройте <a href="https://t.me/BotFather" target="_blank">@BotFather</a> в Telegram</li>
+    <li>Отправьте <code>/newbot</code></li>
+    <li>Придумайте имя (например: "My Upload Bot")</li>
+    <li>Скопируйте токен бота</li>
+    <li>Узнайте свой Telegram ID: отправьте <code>/start</code> боту <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a></li>
+  </ol>
+
+  <h3>Шаг 2: Устанавливаем бота</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Копируем бота из репо
+cd /opt/workspace
+cp -r infralearn/upload-bot .
+cd upload-bot
+
+# Создаём виртуальное окружение
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt</code></pre>
+  </div>
+
+  <h3>Шаг 3: Настраиваем</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Создаём файл с настройками
+cat > .env << EOF
+BOT_TOKEN=ВАШ_ТОКЕН_БОТА
+ADMIN_ID=ВАШ_TELEGRAM_ID
+EOF</code></pre>
+  </div>
+
+  <h3>Шаг 4: Запускаем</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Тестовый запуск
+source .env && python3 bot.py</code></pre>
+  </div>
+  <p>Теперь отправьте боту файл в Telegram — он сохранится в <code>/opt/workspace/uploads/</code></p>
+
+  <h3>Шаг 5: Автозапуск (systemd)</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Копируем systemd сервис
+sudo cp upload-bot.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now upload-bot
+
+# Проверяем
+sudo systemctl status upload-bot</code></pre>
+  </div>
+
+  <h3>Отправка файлов С сервера в Telegram</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Отправить файл себе в Telegram
+curl -F document=@/path/to/file \
+  "https://api.telegram.org/bot${BOT_TOKEN}/sendDocument" \
+  -F chat_id=ВАШ_TELEGRAM_ID</code></pre>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">Двусторонний обмен</div>
+    <p><strong>Ноутбук → Сервер:</strong> кидаете файл боту в Telegram → файл на сервере.<br>
+    <strong>Сервер → Ноутбук:</strong> curl команда → файл приходит в Telegram.</p>
+  </div>
+
   <h2>VPN: OpenVPN за 10 минут</h2>
   <p>Раз у вас есть VPS в USA — можно поднять свой VPN. OpenVPN — проверенное решение, работает на всех платформах.</p>
 
