@@ -716,13 +716,68 @@ gh auth login</code></pre>
   </div>
 
   <h3>Шаг 3: Клонируем vault на компьютер</h3>
-  <div class="code-wrapper">
-    <span class="code-lang">bash</span>
-    <button class="copy-btn">Копировать</button>
-    <pre><code class="language-bash"># На компьютере (в Terminal / PowerShell):
-git clone https://github.com/ВАШ_USERNAME/my-vault.git</code></pre>
+
+  <div class="callout warning">
+    <div class="callout-title">macOS (Terminal)</div>
+    <ol>
+      <li>Откройте <strong>Terminal</strong> (Finder → Applications → Utilities → Terminal, или Spotlight: ⌘+Space → "Terminal")</li>
+      <li>Проверьте что Git установлен:</li>
+    </ol>
   </div>
-  <p>Откройте склонированную папку <code>my-vault</code> в Obsidian: <strong>Open folder as vault</strong>.</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash — macOS Terminal</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Проверяем Git (на macOS обычно уже есть)
+git --version
+# Если нет — установится автоматически при первом вызове (Xcode CLI Tools)
+
+# Переходим в домашнюю папку
+cd ~
+
+# Клонируем vault (замените ВАШ_USERNAME!)
+git clone https://github.com/ВАШ_USERNAME/my-vault.git
+
+# Vault окажется в ~/my-vault/
+ls ~/my-vault/</code></pre>
+  </div>
+
+  <div class="callout danger">
+    <div class="callout-title">Windows (PowerShell)</div>
+    <ol>
+      <li>Сначала установите Git: скачайте с <a href="https://git-scm.com/download/win" target="_blank">git-scm.com/download/win</a> → запустите установщик → Next → Next → Install (все настройки по умолчанию)</li>
+      <li>Откройте <strong>PowerShell</strong> (Start → введите "PowerShell" → Enter)</li>
+    </ol>
+  </div>
+  <div class="code-wrapper">
+    <span class="code-lang">powershell — Windows</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Проверяем что Git установился
+git --version
+
+# Переходим в Documents
+cd ~\Documents
+
+# Клонируем vault (замените ВАШ_USERNAME!)
+git clone https://github.com/ВАШ_USERNAME/my-vault.git
+
+# Vault окажется в Documents\my-vault\
+dir my-vault</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">GitHub запросит авторизацию</div>
+    <p>При первом <code>git clone</code> приватного репозитория Git попросит логин/пароль. <strong>Вместо пароля</strong> используйте Personal Access Token (тот же, что для MCP GitHub).<br><br>
+    Или установите <strong>GitHub Desktop</strong> (<a href="https://desktop.github.com" target="_blank">desktop.github.com</a>) — он сохранит авторизацию и можно клонировать через GUI.</p>
+  </div>
+
+  <h3>Шаг 4: Открываем vault в Obsidian</h3>
+  <ol>
+    <li>Скачайте <a href="https://obsidian.md" target="_blank">Obsidian</a> если ещё не установлен</li>
+    <li>Запустите Obsidian → <strong>Open folder as vault</strong></li>
+    <li><strong>macOS:</strong> выберите <code>~/my-vault</code></li>
+    <li><strong>Windows:</strong> выберите <code>Documents\my-vault</code></li>
+    <li>Готово! Вы увидите папки 00-Inbox, Projects, Daily-Notes</li>
+  </ol>
 
   <h3>Шаг 4: Настраиваем плагин Obsidian Git</h3>
   <p>Плагин автоматически синхронизирует vault между компьютером и сервером через Git.</p>
