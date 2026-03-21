@@ -1,38 +1,49 @@
 #!/usr/bin/env node
 // InfraLearn Statusline — простая версия для студентов
-// Показывает: директорию, модель, контекст, время сессии
+// Показывает: модель, контекст %, время сессии, стоимость
 
-const data = JSON.parse(process.argv[2] || '{}');
+let inputData = '';
+process.stdin.on('data', (chunk) => { inputData += chunk; });
+process.stdin.on('end', () => {
+  try {
+    const data = JSON.parse(inputData);
 
-const model = (data.model || 'unknown').replace('claude-', '').replace('-', ' ');
-const contextPct = data.context_window_tokens
-    ? Math.round((data.total_tokens_in_conversation / data.context_window_tokens) * 100)
-    : 0;
+    // Модель
+    const model = data.model?.display_name || 'Claude';
 
-// Progress bar
-const barLen = 10;
-const filled = Math.round(contextPct / 100 * barLen);
-const bar = '\u2593'.repeat(filled) + '\u2591'.repeat(barLen - filled);
+    // Контекст %
+    const contextPct = Math.round(data.context_window?.used_percentage || 0);
+    const barLen = 10;
+    const filled = Math.round(contextPct / 100 * barLen);
+    const bar = '\u2593'.repeat(filled) + '\u2591'.repeat(barLen - filled);
 
-// Session duration
-let duration = '';
-if (data.session_start_time) {
-    const mins = Math.round((Date.now() - data.session_start_time) / 60000);
-    duration = mins < 60 ? `${mins}m` : `${Math.floor(mins/60)}h${String(mins%60).padStart(2,'0')}m`;
-}
+    // Время сессии
+    let duration = '';
+    if (data.session?.duration_seconds) {
+      const mins = Math.round(data.session.duration_seconds / 60);
+      duration = mins < 60
+        ? `${mins}m`
+        : `${Math.floor(mins / 60)}h${String(mins % 60).padStart(2, '0')}m`;
+    }
 
-// Cost
-const cost = data.total_cost ? `$${data.total_cost.toFixed(2)}` : '';
+    // Стоимость
+    const cost = data.session?.cost_usd
+      ? `$${data.session.cost_usd.toFixed(2)}`
+      : '';
 
-// Line 1
-const parts = [model, `${bar} ${contextPct}%`, duration, cost].filter(Boolean);
-const line1 = parts.join(' | ');
+    // Изменения
+    let changes = '';
+    if (data.git?.lines_added || data.git?.lines_removed) {
+      changes = `+${data.git.lines_added || 0},-${data.git.lines_removed || 0} lines`;
+    }
 
-// Line 2: git changes
-let line2 = '';
-if (data.lines_added || data.lines_removed) {
-    line2 = `+${data.lines_added || 0},-${data.lines_removed || 0} lines`;
-}
+    // Собираем строку
+    const parts = [model, `${bar} ${contextPct}%`, duration, cost].filter(Boolean);
+    const line1 = parts.join(' \u2022 ');
 
-const output = [line1, line2].filter(Boolean).join('\n');
-process.stdout.write(output);
+    const output = changes ? `${line1}\n${changes}` : line1;
+    process.stdout.write(output);
+  } catch (e) {
+    process.stdout.write('statusline error');
+  }
+});

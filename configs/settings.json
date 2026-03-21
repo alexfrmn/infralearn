@@ -2,6 +2,6 @@
   "language": "ru",
   "statusLine": {
     "type": "command",
-    "command": ["node", "/root/.claude/statusline.js"]
+    "command": "node /root/.claude/statusline.js"
   }
 }
