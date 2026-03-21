@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InfraLearn — Свой AI-сервер</title>
+  <meta name="description" content="Курс: Claude Code + Codex на вашем сервере. Пошаговая настройка за один день.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/markdown.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-content">
+    <h1 class="site-title">InfraLearn <span>— Свой AI-сервер</span></h1>
+    <p class="site-subtitle">Claude Code + Codex на вашем сервере</p>
+    <p class="site-date">21 марта 2026</p>
+  </div>
+</header>
+
+<!-- TAB NAV -->
+<nav class="tab-nav-wrapper">
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="block-0"><span class="tab-num">0</span>Введение</button>
+    <button class="tab-btn" data-tab="block-1"><span class="tab-num">1</span>VPS</button>
+    <button class="tab-btn" data-tab="block-2"><span class="tab-num">2</span>Сервер</button>
+    <button class="tab-btn" data-tab="block-3"><span class="tab-num">3</span>Claude Code</button>
+    <button class="tab-btn" data-tab="block-4"><span class="tab-num">4</span>CLAUDE.md</button>
+    <button class="tab-btn" data-tab="block-5"><span class="tab-num">5</span>Memory + MCP</button>
+    <button class="tab-btn" data-tab="block-6"><span class="tab-num">6</span>Хуки</button>
+    <button class="tab-btn" data-tab="block-7"><span class="tab-num">7</span>Codex CLI</button>
+    <button class="tab-btn" data-tab="block-8"><span class="tab-num">8</span>Бонус</button>
+    <button class="tab-btn" data-tab="block-9"><span class="tab-num">9</span>Финал</button>
+    <button class="tab-btn" data-tab="cheatsheet"><span class="tab-num">CS</span>Шпаргалка</button>
+    <button class="tab-btn" data-tab="troubleshooting"><span class="tab-num">?</span>Проблемы</button>
+  </div>
+</nav>
+
+<!-- CONTENT -->
+<main class="main-content">
+
+<!-- BLOCK 0 -->
+<section class="tab-pane active" id="block-0">
+  <div class="block-header">
+    <h1>Блок 0 — Введение</h1>
+    <span class="block-duration">20 мин</span>
+  </div>
+
+  <h2>Зачем свой сервер?</h2>
+  <p>AI-ассистенты вроде Claude Code и Codex работают в терминале. Чтобы получить от них максимум, нужен сервер, который работает 24/7. Вот три главные причины:</p>
+  <ul>
+    <li><strong>24/7 доступ</strong> — сервер не спит, не перезагружается, не разряжается. Вы можете подключиться с любого устройства в любой момент.</li>
+    <li><strong>Память и контекст</strong> — все ваши настройки, скиллы, MCP-серверы и история сохраняются. Каждая новая сессия начинается с того места, где вы остановились.</li>
+    <li><strong>Приватность</strong> — ваши файлы, ключи API и проекты хранятся на вашем сервере, а не на чужом компьютере.</li>
+  </ul>
+
+  <h2>Архитектура</h2>
+  <p>Схема того, как всё работает:</p>
+  <div class="ascii-diagram">
++-------------+      SSH       +------------------+      API       +--------------+
+|             | -------------->|                  | -------------->|              |
+|   Ноутбук   |   (Termius)   |   VPS (Ubuntu)   |   (HTTPS)     | Claude / GPT |
+|             | <--------------|                  | <--------------|              |
++-------------+                +------------------+                +--------------+
+                                |                |
+                                | Claude Code    |
+                                | Codex CLI      |
+                                | MCP-серверы    |
+                                | Хуки + Скиллы  |
+                                | CLAUDE.md      |
+                                +----------------+</div>
+
+  <h2>Что мы настроим за день</h2>
+  <ol>
+    <li>Арендуем VPS и подключимся через Termius</li>
+    <li>Установим Node.js, Git и базовые утилиты</li>
+    <li>Установим и настроим Claude Code</li>
+    <li>Создадим CLAUDE.md и подключим скиллы</li>
+    <li>Настроим память и MCP-серверы</li>
+    <li>Настроим хуки</li>
+    <li>Установим Codex CLI и сравним с Claude Code</li>
+    <li>Бонус: OpenClaw, VPN</li>
+  </ol>
+
+  <div class="callout tip">
+    <div class="callout-title">Совет</div>
+    <p>Не нужно всё запоминать. В конце курса есть шпаргалка со всеми командами. Главное — понять логику и попробовать руками.</p>
+  </div>
+
+  <h2>Что понадобится</h2>
+  <ul>
+    <li>Ноутбук с браузером (для OAuth-авторизации)</li>
+    <li>Termius (бесплатный SSH-клиент, скачайте заранее на <a href="https://termius.com" target="_blank">termius.com</a>)</li>
+    <li>Подписка Claude Pro или Max (для Claude Code)</li>
+    <li>Подписка ChatGPT Plus (для Codex CLI) — опционально</li>
+    <li>Банковская карта для оплаты VPS (~1540 руб/мес)</li>
+  </ul>
+</section>
+
+<!-- BLOCK 1 -->
+<section class="tab-pane" id="block-1">
+  <div class="block-header">
+    <h1>Блок 1 — VPS + Подключение</h1>
+    <span class="block-duration">40 мин</span>
+  </div>
+
+  <h2>Шаг 1. Покупка VPS</h2>
+
+  <div class="step" data-step="1">
+    <h3>Открываем 4vps.su</h3>
+    <p>Переходим на сайт <a href="https://4vps.su" target="_blank">4vps.su</a> и выбираем раздел <strong>VPS/VDS</strong>.</p>
+  </div>
+
+  <div class="step" data-step="2">
+    <h3>Выбираем тариф</h3>
+    <p>Нам нужен тариф <strong>USA-cx31</strong> (или аналогичный) со следующими параметрами:</p>
+    <table class="comparison-table">
+      <tr><th>Параметр</th><th>Значение</th></tr>
+      <tr><td>CPU</td><td>4 ядра</td></tr>
+      <tr><td>RAM</td><td>4 GB</td></tr>
+      <tr><td>Диск</td><td>40 GB NVMe</td></tr>
+      <tr><td>Локация</td><td>USA</td></tr>
+      <tr><td>Цена</td><td>~1540 руб/мес</td></tr>
+    </table>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">Важно: локация</div>
+    <p>Выбирайте сервер в <strong>USA</strong>. Claude Code и Codex API работают из США, и пинг будет минимальным. Российские серверы тоже подойдут, но API-запросы будут идти дольше.</p>
+  </div>
+
+  <div class="step" data-step="3">
+    <h3>Выбираем ОС</h3>
+    <p>Операционная система: <strong>Ubuntu 24.04 LTS</strong>. Это стабильный и долгосрочный релиз, все команды в курсе написаны под него.</p>
+  </div>
+
+  <div class="step" data-step="4">
+    <h3>Оплата и получение доступа</h3>
+    <p>После оплаты вам придёт письмо с данными для подключения:</p>
+    <ul>
+      <li><strong>IP-адрес</strong> сервера (например, <code>203.0.113.42</code>)</li>
+      <li><strong>Логин:</strong> <code>root</code></li>
+      <li><strong>Пароль</strong></li>
+    </ul>
+  </div>
+
+  <h2>Шаг 2. Подключение через Termius</h2>
+
+  <div class="step" data-step="1">
+    <h3>Устанавливаем Termius</h3>
+    <p>Скачайте Termius с <a href="https://termius.com" target="_blank">termius.com</a>. Доступен для macOS, Windows, Linux, iOS и Android. Бесплатной версии достаточно.</p>
+  </div>
+
+  <div class="step" data-step="2">
+    <h3>Создаём новый хост</h3>
+    <p>В Termius нажмите <strong>+ New Host</strong> и заполните:</p>
+    <ul>
+      <li><strong>Label:</strong> AI Server (или любое название)</li>
+      <li><strong>Hostname:</strong> ваш IP-адрес</li>
+      <li><strong>Port:</strong> 22</li>
+      <li><strong>Username:</strong> root</li>
+      <li><strong>Password:</strong> ваш пароль из письма</li>
+    </ul>
+    <p>Нажмите <strong>Save</strong>, затем дважды кликните на хост для подключения.</p>
+  </div>
+
+  <div class="step" data-step="3">
+    <h3>Первое подключение</h3>
+    <p>При первом подключении Termius спросит, доверяете ли вы серверу (fingerprint). Нажмите <strong>Yes / Accept</strong>.</p>
+    <p>Если видите приглашение <code>root@server:~#</code> — вы подключены!</p>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">Проверка подключения</div>
+    <p>Выполните команду для проверки:</p>
+  </div>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">whoami && hostname && uptime</code></pre>
+  </div>
+  <p>Должны увидеть <code>root</code>, имя сервера и время работы.</p>
+
+  <div class="callout danger">
+    <div class="callout-title">Не подключается?</div>
+    <p>Проверьте: правильный ли IP, порт 22, пароль. Если хостинг только создал VPS — подождите 2-3 минуты, сервер может ещё загружаться. Подробнее — на вкладке <strong>Проблемы</strong>.</p>
+  </div>
+</section>
+
+<!-- BLOCK 2 -->
+<section class="tab-pane" id="block-2">
+  <div class="block-header">
+    <h1>Блок 2 — Настройка сервера</h1>
+    <span class="block-duration">40 мин</span>
+  </div>
+
+  <h2>Шаг 1. Обновляем систему</h2>
+  <p>Первым делом обновим все пакеты до актуальных версий:</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">apt update && apt upgrade -y</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">Что происходит</div>
+    <p><code>apt update</code> — обновляет список доступных пакетов. <code>apt upgrade -y</code> — устанавливает обновления без вопросов (<code>-y</code> = автоматическое «да»).</p>
+  </div>
+
+  <h2>Шаг 2. Устанавливаем базовые утилиты</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">apt install -y git curl wget htop tmux jq unzip</code></pre>
+  </div>
+  <p>Что устанавливаем:</p>
+  <ul>
+    <li><code>git</code> — система контроля версий</li>
+    <li><code>curl</code>, <code>wget</code> — скачивание файлов из интернета</li>
+    <li><code>htop</code> — мониторинг ресурсов сервера</li>
+    <li><code>tmux</code> — мультиплексор терминала (несколько окон в одном)</li>
+    <li><code>jq</code> — работа с JSON в командной строке</li>
+    <li><code>unzip</code> — распаковка архивов</li>
+  </ul>
+
+  <h2>Шаг 3. Устанавливаем Node.js 22</h2>
+  <p>Claude Code и Codex CLI написаны на Node.js. Нам нужна версия 22 (LTS):</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+apt install -y nodejs</code></pre>
+  </div>
+
+  <h2>Шаг 4. Проверяем версии</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">node -v && npm -v && python3 --version && git --version</code></pre>
+  </div>
+  <p>Ожидаемый результат (версии могут отличаться):</p>
+  <div class="code-wrapper">
+    <pre><code>v22.x.x
+10.x.x
+Python 3.12.x
+git version 2.x.x</code></pre>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">Важно</div>
+    <p>Если <code>node -v</code> показывает ошибку — повторите шаг 3. Если <code>python3</code> не найден — на Ubuntu 24.04 он должен быть предустановлен. Установите вручную: <code>apt install -y python3</code>.</p>
+  </div>
+
+  <h2>Шаг 5. Настраиваем Git</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">git config --global user.name "Your Name"
+git config --global user.email "your@email.com"</code></pre>
+  </div>
+  <p>Замените <code>Your Name</code> и <code>your@email.com</code> на ваши реальные данные. Это нужно для коммитов.</p>
+
+  <h2>Шаг 6. Создаём рабочую директорию</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">mkdir -p /opt/workspace && cd /opt/workspace</code></pre>
+  </div>
+  <p>Все наши проекты будут в <code>/opt/workspace/</code>. Это стандартная практика для серверов.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">Совет: tmux</div>
+    <p>Если потеряете соединение с сервером, вся работа в обычном терминале пропадёт. Используйте <code>tmux</code> — он сохраняет сессию. Запустите <code>tmux</code> перед началом работы, и если отключитесь — подключитесь снова и введите <code>tmux attach</code>.</p>
+  </div>
+</section>
+
+<!-- BLOCK 3 -->
+<section class="tab-pane" id="block-3">
+  <div class="block-header">
+    <h1>Блок 3 — Claude Code</h1>
+    <span class="block-duration">50 мин</span>
+  </div>
+
+  <h2>Шаг 1. Установка</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">npm install -g @anthropic-ai/claude-code</code></pre>
+  </div>
+  <p>Флаг <code>-g</code> устанавливает глобально — команда <code>claude</code> будет доступна из любой директории.</p>
+
+  <h2>Шаг 2. Первый запуск</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">cd /opt/workspace
+claude</code></pre>
+  </div>
+
+  <h2>Шаг 3. OAuth-авторизация</h2>
+  <p>При первом запуске Claude Code покажет URL для авторизации. Вот что делать:</p>
+  <ol>
+    <li><strong>Скопируйте URL</strong> из терминала (он начинается с <code>https://console.anthropic.com/...</code>)</li>
+    <li><strong>Откройте его в браузере на ноутбуке</strong> (не на сервере!)</li>
+    <li><strong>Войдите</strong> в свой аккаунт Anthropic</li>
+    <li><strong>Подтвердите</strong> авторизацию</li>
+    <li><strong>Скопируйте код</strong> и вставьте его обратно в терминал</li>
+  </ol>
+
+  <div class="callout warning">
+    <div class="callout-title">Важно</div>
+    <p>URL нужно открыть именно на <strong>ноутбуке</strong> (в обычном браузере), а не на сервере. На сервере нет браузера. Код из URL вставьте обратно в терминал сервера.</p>
+  </div>
+
+  <h2>Шаг 4. Первый диалог</h2>
+  <p>Попробуем дать Claude Code первую задачу. Введите прямо в чате Claude:</p>
+  <div class="code-wrapper">
+    <button class="copy-btn">Копировать</button>
+    <pre><code>Привет! Создай скрипт на Python, который показывает погоду в Москве через wttr.in API</code></pre>
+  </div>
+  <p>Claude Code создаст Python-файл, объяснит его и предложит запустить. Разрешите выполнение и посмотрите результат.</p>
+
+  <h2>Шаг 5. Основные команды</h2>
+  <p>Внутри Claude Code доступны специальные команды (начинаются с <code>/</code>):</p>
+  <table class="comparison-table">
+    <tr><th>Команда</th><th>Описание</th></tr>
+    <tr><td><code>/help</code></td><td>Список всех команд</td></tr>
+    <tr><td><code>/model</code></td><td>Показать/переключить модель</td></tr>
+    <tr><td><code>/status</code></td><td>Статус подключения и подписки</td></tr>
+    <tr><td><code>/compact</code></td><td>Сжать контекст (экономит токены)</td></tr>
+    <tr><td><code>/clear</code></td><td>Очистить текущий диалог</td></tr>
+    <tr><td><code>/permissions</code></td><td>Управление разрешениями</td></tr>
+  </table>
+
+  <h2>Шаг 6. Настройка языка</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">claude config set language ru</code></pre>
+  </div>
+  <p>Теперь Claude Code будет отвечать на русском языке по умолчанию.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">Совет</div>
+    <p>Claude Code работает в контексте текущей директории. Если вы в <code>/opt/workspace/my-project</code>, он «видит» файлы этого проекта. Всегда переходите в нужную директорию перед запуском.</p>
+  </div>
+</section>
+
+<!-- BLOCK 4 -->
+<section class="tab-pane" id="block-4">
+  <div class="block-header">
+    <h1>Блок 4 — CLAUDE.md + Skills</h1>
+    <span class="block-duration">40 + 40 мин</span>
+  </div>
+
+  <h2>Часть 1: CLAUDE.md</h2>
+  <p><code>CLAUDE.md</code> — это файл инструкций для Claude Code. Он определяет, как AI будет себя вести, какие правила соблюдать, какой контекст учитывать.</p>
+
+  <h3>Два уровня CLAUDE.md</h3>
+  <table class="comparison-table">
+    <tr><th>Уровень</th><th>Путь</th><th>Описание</th></tr>
+    <tr><td>Глобальный</td><td><code>~/.claude/CLAUDE.md</code></td><td>Действует во всех проектах</td></tr>
+    <tr><td>Проектный</td><td><code>./CLAUDE.md</code></td><td>Действует только в текущем проекте</td></tr>
+  </table>
+  <p>Проектный CLAUDE.md имеет приоритет и дополняет глобальный.</p>
+
+  <h3>Скачиваем шаблоны</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Клонируем репозиторий курса
+git clone https://github.com/alexfrmn/infralearn.git /opt/workspace/infralearn</code></pre>
+  </div>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Устанавливаем глобальный CLAUDE.md
+mkdir -p ~/.claude
+cp /opt/workspace/infralearn/configs/CLAUDE.md ~/.claude/CLAUDE.md</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">Что внутри шаблона</div>
+    <p>Шаблон содержит базовые правила: язык ответов, стиль кода, правила безопасности. Вы можете (и должны!) адаптировать его под себя.</p>
+  </div>
+
+  <h3>Что писать в CLAUDE.md</h3>
+  <ul>
+    <li><strong>Кто вы</strong> — ваша роль, стек технологий, уровень</li>
+    <li><strong>Правила</strong> — язык, стиль кода, что можно/нельзя</li>
+    <li><strong>Контекст проекта</strong> — архитектура, ключевые файлы</li>
+    <li><strong>Память</strong> — что важно помнить между сессиями</li>
+  </ul>
+
+  <h2>Часть 2: Skills (Скиллы)</h2>
+  <p>Скиллы — это готовые наборы инструкций для типовых задач. Вместо того чтобы каждый раз объяснять Claude, как деплоить, коммитить или писать тесты, вы вызываете скилл одной командой.</p>
+
+  <h3>Устанавливаем скиллы</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Копируем скиллы из репозитория курса
+mkdir -p ~/.claude/skills
+cp -r /opt/workspace/infralearn/skills/* ~/.claude/skills/</code></pre>
+  </div>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Проверяем, что скиллы на месте
+ls ~/.claude/skills/</code></pre>
+  </div>
+
+  <h3>Как использовать скиллы</h3>
+  <p>Внутри Claude Code введите <code>/</code> и начните набирать название скилла. Claude покажет список доступных. Например:</p>
+  <ul>
+    <li><code>/commit</code> — создать осмысленный коммит</li>
+    <li><code>/review</code> — ревью кода</li>
+    <li><code>/deploy</code> — деплой проекта</li>
+  </ul>
+
+  <h3>Создаём свой скилл</h3>
+  <p>Скилл — это обычный Markdown-файл. Создадим простой:</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">cat &gt; ~/.claude/skills/hello.md &lt;&lt; 'EOF'
+---
+name: hello
+description: Приветствие и статус сервера
+---
+
+Покажи:
+1. Текущее время на сервере
+2. Uptime
+3. Загрузку CPU и памяти (htop-style)
+4. Свободное место на диске
+
+Формат: компактный, в одном сообщении.
+EOF</code></pre>
+  </div>
+  <p>Теперь в Claude Code можно вызвать <code>/hello</code>, и он покажет статус сервера.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">Совет</div>
+    <p>Начните с 3-5 скиллов для повседневных задач. Со временем вы накопите библиотеку, которая сэкономит часы.</p>
+  </div>
+</section>
+
+<!-- BLOCK 5 -->
+<section class="tab-pane" id="block-5">
+  <div class="block-header">
+    <h1>Блок 5 — Memory + MCP</h1>
+    <span class="block-duration">40 + 50 мин</span>
+  </div>
+
+  <h2>Часть 1: Память (Memory)</h2>
+  <p>По умолчанию Claude Code не помнит предыдущие сессии. MCP-сервер <strong>Memory</strong> решает эту проблему — он сохраняет факты между сессиями в виде графа знаний.</p>
+
+  <h3>Установка Memory</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">claude mcp add memory -- npx -y @modelcontextprotocol/server-memory</code></pre>
+  </div>
+
+  <p>После установки Claude Code получает инструменты для работы с памятью:</p>
+  <ul>
+    <li><strong>create_entities</strong> — создать сущности (вы, проекты, серверы)</li>
+    <li><strong>add_observations</strong> — добавить факты к сущностям</li>
+    <li><strong>search_nodes</strong> — поиск по памяти</li>
+    <li><strong>create_relations</strong> — связи между сущностями</li>
+  </ul>
+
+  <div class="callout tip">
+    <div class="callout-title">Как использовать</div>
+    <p>Просто скажите Claude: «Запомни, что мой основной проект — на Python 3.12, база — PostgreSQL». Он сохранит это в память и вспомнит в следующей сессии.</p>
+  </div>
+
+  <h2>Часть 2: MCP-серверы</h2>
+  <p><strong>MCP</strong> (Model Context Protocol) — это способ дать Claude Code доступ к внешним инструментам: файловой системе, GitHub, документации и другим сервисам.</p>
+
+  <h3>Файловая система</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">claude mcp add filesystem -- npx -y @anthropic-ai/mcp-filesystem /opt/workspace</code></pre>
+  </div>
+  <p>Даёт Claude Code прямой доступ к файлам в <code>/opt/workspace</code>: чтение, запись, поиск, создание директорий.</p>
+
+  <h3>GitHub</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Замените ghp_YOUR_TOKEN на ваш Personal Access Token из GitHub
+claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=ghp_YOUR_TOKEN \
+  -- npx -y @modelcontextprotocol/server-github</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">Как получить GitHub Token</div>
+    <p>GitHub &rarr; Settings &rarr; Developer settings &rarr; Personal access tokens &rarr; Tokens (classic) &rarr; Generate new token. Дайте права: <code>repo</code>, <code>read:org</code>.</p>
+  </div>
+
+  <h3>Context7 — Документация библиотек</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">claude mcp add context7 -- npx -y @upstash/context7-mcp@latest</code></pre>
+  </div>
+  <p>Даёт Claude Code доступ к актуальной документации Python, Node.js и других библиотек. Больше никаких устаревших ответов.</p>
+
+  <h3>Проверяем установленные MCP</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">claude mcp list</code></pre>
+  </div>
+  <p>Должны увидеть список из 4 серверов: <code>memory</code>, <code>filesystem</code>, <code>github</code>, <code>context7</code>.</p>
+
+  <h2>Часть 3: Obsidian Vault на сервере</h2>
+  <p>Создадим базу знаний (vault) прямо на сервере. Это удобно для хранения заметок, документации и всего, что Claude должен помнить.</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">mkdir -p /opt/workspace/vault/{00-Inbox,Projects,Daily-Notes}
+cd /opt/workspace/vault
+git init
+echo "# My Knowledge Base" &gt; README.md
+git add . && git commit -m "init vault"</code></pre>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">Зачем vault на сервере?</div>
+    <p>Claude Code может читать и писать в vault через MCP filesystem. Это значит, что он может сам создавать заметки, искать по ним и использовать как долгосрочную память. Если вы используете Obsidian на компьютере — синхронизируйте через Git.</p>
+  </div>
+</section>
+
+<!-- BLOCK 6 -->
+<section class="tab-pane" id="block-6">
+  <div class="block-header">
+    <h1>Блок 6 — Хуки</h1>
+    <span class="block-duration">30 мин</span>
+  </div>
+
+  <h2>Что такое хуки?</h2>
+  <p>Хуки — это скрипты, которые Claude Code автоматически запускает при определённых событиях. Например:</p>
+  <ul>
+    <li><strong>PreToolUse</strong> — перед выполнением инструмента (можно блокировать опасные операции)</li>
+    <li><strong>PostToolUse</strong> — после выполнения инструмента</li>
+    <li><strong>Notification</strong> — когда Claude хочет привлечь ваше внимание</li>
+  </ul>
+
+  <h2>Шаг 1. Копируем хуки из репозитория</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">mkdir -p ~/.claude/hooks
+cp /opt/workspace/infralearn/hooks/*.sh ~/.claude/hooks/
+chmod +x ~/.claude/hooks/*.sh</code></pre>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">Важно: абсолютные пути</div>
+    <p>В настройках хуков <strong>всегда</strong> используйте абсолютные пути (<code>/root/.claude/hooks/script.sh</code>), а не относительные (<code>~/.claude/hooks/script.sh</code>). Относительные пути ломаются при работе из разных директорий.</p>
+  </div>
+
+  <h2>Шаг 2. Настраиваем settings.local.json</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">cp /opt/workspace/infralearn/configs/settings.local.json ~/.claude/settings.local.json</code></pre>
+  </div>
+
+  <p>Файл <code>settings.local.json</code> описывает, какие хуки запускать и когда. Пример структуры:</p>
+  <div class="code-wrapper">
+    <span class="code-lang">json</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-json">{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/pre-bash.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/root/.claude/hooks/notify.sh"
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+  </div>
+
+  <h2>Шаг 3. Проверяем</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Проверяем, что файлы на месте
+ls -la ~/.claude/hooks/
+cat ~/.claude/settings.local.json</code></pre>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">Совет</div>
+    <p>Начните с простого хука уведомлений (отправка в Telegram, когда Claude завершил долгую задачу). Сложные хуки с блокировкой добавляйте позже, когда поймёте, какие операции хотите контролировать.</p>
+  </div>
+
+  <h3>Пример: хук уведомления</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">cat &gt; ~/.claude/hooks/notify.sh &lt;&lt; 'HOOKEOF'
+#!/bin/bash
+# Простой хук: логирует уведомления Claude Code
+LOGFILE="/tmp/claude-notifications.log"
+INPUT=$(cat)
+TITLE=$(echo "$INPUT" | jq -r '.title // "no title"')
+MSG=$(echo "$INPUT" | jq -r '.message // "no message"')
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] $TITLE: $MSG" &gt;&gt; "$LOGFILE"
+HOOKEOF
+chmod +x ~/.claude/hooks/notify.sh</code></pre>
+  </div>
+</section>
+
+<!-- BLOCK 7 -->
+<section class="tab-pane" id="block-7">
+  <div class="block-header">
+    <h1>Блок 7 — Codex CLI</h1>
+    <span class="block-duration">50 мин</span>
+  </div>
+
+  <h2>Шаг 1. Установка</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">npm install -g @openai/codex</code></pre>
+  </div>
+
+  <h2>Шаг 2. Первый запуск</h2>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">codex</code></pre>
+  </div>
+  <p>Codex предложит авторизоваться. Два варианта:</p>
+  <ol>
+    <li><strong>ChatGPT Plus</strong> — OAuth через браузер (аналогично Claude Code)</li>
+    <li><strong>API Key</strong> — если есть ключ OpenAI API</li>
+  </ol>
+
+  <h2>Шаг 3. AGENTS.md</h2>
+  <p>Codex CLI использует <code>AGENTS.md</code> вместо <code>CLAUDE.md</code>. Это аналогичный файл инструкций, но для Codex:</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">cp /opt/workspace/infralearn/configs/AGENTS.md /opt/workspace/AGENTS.md</code></pre>
+  </div>
+
+  <h3>Что писать в AGENTS.md</h3>
+  <p>Те же принципы, что и в CLAUDE.md: кто вы, правила, контекст. Codex будет читать этот файл при каждом запуске из директории, где он лежит.</p>
+
+  <h2>Шаг 4. Сравнение Claude Code и Codex</h2>
+  <p>Дадим одну и ту же задачу обоим инструментам и сравним:</p>
+  <div class="code-wrapper">
+    <button class="copy-btn">Копировать</button>
+    <pre><code>Создай REST API на Python (Flask) с одним эндпоинтом /health,
+который возвращает JSON с текущим временем и статусом сервера.</code></pre>
+  </div>
+
+  <table class="comparison-table">
+    <tr><th>Параметр</th><th>Claude Code</th><th>Codex CLI</th></tr>
+    <tr><td>Компания</td><td>Anthropic</td><td>OpenAI</td></tr>
+    <tr><td>Модели</td><td>Claude Sonnet / Opus</td><td>GPT-4.1 / o3</td></tr>
+    <tr><td>Файл инструкций</td><td>CLAUDE.md</td><td>AGENTS.md</td></tr>
+    <tr><td>Плагины</td><td>MCP-серверы</td><td>Нет (пока)</td></tr>
+    <tr><td>Скиллы</td><td>Да (Markdown)</td><td>Нет</td></tr>
+    <tr><td>Хуки</td><td>Да</td><td>Нет</td></tr>
+    <tr><td>Память</td><td>Через MCP</td><td>Нет</td></tr>
+    <tr><td>Песочница</td><td>Нет (прямой доступ)</td><td>Да (sandbox)</td></tr>
+    <tr><td>Подписка</td><td>Claude Pro/Max</td><td>ChatGPT Plus/Pro</td></tr>
+  </table>
+
+  <div class="callout info">
+    <div class="callout-title">Когда что использовать</div>
+    <p><strong>Claude Code</strong> — основной инструмент. MCP, скиллы и хуки делают его мощнее. <strong>Codex CLI</strong> — второе мнение и альтернативный подход. Иногда одна модель справляется лучше другой с конкретной задачей.</p>
+  </div>
+</section>
+
+<!-- BLOCK 8 -->
+<section class="tab-pane" id="block-8">
+  <div class="block-header">
+    <h1>Блок 8 — Бонус: OpenClaw / VPN</h1>
+    <span class="block-duration">если успеем</span>
+  </div>
+
+  <h2>OpenClaw — Claude в Telegram</h2>
+  <p>OpenClaw позволяет общаться с Claude Code через Telegram-бота. Это удобно: пишете в Telegram с телефона, а Claude выполняет задачи на сервере.</p>
+
+  <h3>Установка</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash">npm install -g openclaw</code></pre>
+  </div>
+
+  <h3>Создание бота</h3>
+  <ol>
+    <li>Откройте Telegram, найдите <a href="https://t.me/BotFather" target="_blank">@BotFather</a></li>
+    <li>Отправьте <code>/newbot</code></li>
+    <li>Придумайте имя и username для бота</li>
+    <li>Скопируйте токен бота (формат: <code>1234567890:ABCdefGHIjklMNOpqrSTUvwxYZ</code>)</li>
+  </ol>
+
+  <h3>Настройка</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Инициализация — мастер настройки
+openclaw init</code></pre>
+  </div>
+  <p>Мастер спросит токен бота и другие параметры. После настройки:</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Запуск
+openclaw start</code></pre>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">Важно</div>
+    <p>OpenClaw требует активную подписку Claude. Убедитесь, что Claude Code работает на сервере перед настройкой OpenClaw.</p>
+  </div>
+
+  <h2>VPN: WireGuard за 5 минут</h2>
+  <p>Раз у вас есть VPS в USA — можно поднять VPN для обхода ограничений.</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Устанавливаем WireGuard через скрипт
+curl -O https://raw.githubusercontent.com/angristan/wireguard-install/master/wireguard-install.sh
+chmod +x wireguard-install.sh
+./wireguard-install.sh</code></pre>
+  </div>
+  <p>Скрипт задаст несколько вопросов (можно оставить всё по умолчанию) и создаст конфигурацию клиента. Файл конфига можно скачать на телефон через QR-код.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">Совет</div>
+    <p>Установите приложение WireGuard на телефон/компьютер, импортируйте конфиг — и VPN готов. Скорость будет хорошая, так как сервер в USA.</p>
+  </div>
+</section>
+
+<!-- BLOCK 9 -->
+<section class="tab-pane" id="block-9">
+  <div class="block-header">
+    <h1>Блок 9 — Финал + Roadmap</h1>
+    <span class="block-duration">20 мин</span>
+  </div>
+
+  <h2>Чеклист: что должно работать</h2>
+  <ul class="checklist">
+    <li>VPS работает, подключаетесь через Termius</li>
+    <li>Node.js 22, Git, базовые утилиты установлены</li>
+    <li>Claude Code установлен, авторизован, CLAUDE.md на месте</li>
+    <li>Минимум 3 скилла установлены и работают</li>
+    <li>Память (Memory MCP) настроена</li>
+    <li>3+ MCP-сервера подключены (memory, filesystem, github/context7)</li>
+    <li>Хуки настроены (settings.local.json)</li>
+    <li>Codex CLI установлен и авторизован</li>
+  </ul>
+
+  <h2>Что дальше: Roadmap развития</h2>
+
+  <h3>Неделя 1-2: Углубление</h3>
+  <ol>
+    <li><strong>Расширяйте CLAUDE.md</strong> — добавляйте правила по мере работы. Каждый раз, когда Claude делает что-то не так, добавляйте правило.</li>
+    <li><strong>Создавайте свои скиллы</strong> — автоматизируйте повторяющиеся задачи. 5-10 скиллов за первые две недели — отличный результат.</li>
+  </ol>
+
+  <h3>Неделя 3-4: Интеграции</h3>
+  <ol start="3">
+    <li><strong>Добавляйте MCP-серверы:</strong>
+      <ul>
+        <li>Obsidian — работа с заметками</li>
+        <li>Email — чтение/отправка писем</li>
+        <li>Telegram — уведомления</li>
+        <li>Exa — веб-поиск</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h3>Месяц 2: Автоматизация</h3>
+  <ol start="4">
+    <li><strong>OpenClaw</strong> — Telegram-бот с доступом к Claude. Управляйте сервером с телефона.</li>
+    <li><strong>Мультиагенты</strong> — несколько AI работают вместе: один пишет код, другой тестирует, третий документирует.</li>
+    <li><strong>Cron-задачи</strong> — автоматические задачи по расписанию: мониторинг, отчёты, бэкапы.</li>
+  </ol>
+
+  <div class="callout tip">
+    <div class="callout-title">Главное правило</div>
+    <p>Не пытайтесь настроить всё сразу. Начните с базы (Claude Code + 3 MCP + CLAUDE.md) и добавляйте по одному инструменту в неделю. Через месяц у вас будет мощная рабочая среда, заточенная именно под ваши задачи.</p>
+  </div>
+
+  <h2>Ресурсы</h2>
+  <ul>
+    <li><a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank">Документация Claude Code</a></li>
+    <li><a href="https://modelcontextprotocol.io" target="_blank">MCP — Model Context Protocol</a></li>
+    <li><a href="https://github.com/openai/codex" target="_blank">Codex CLI (GitHub)</a></li>
+    <li><a href="https://github.com/anthropics/claude-code" target="_blank">Claude Code (GitHub)</a></li>
+  </ul>
+</section>
+
+<!-- CHEAT SHEET -->
+<section class="tab-pane" id="cheatsheet">
+  <div class="block-header">
+    <h1>Шпаргалка</h1>
+    <span class="block-duration">все команды</span>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Сервер</h3>
+    <div class="code-wrapper">
+      <span class="code-lang">bash</span>
+      <button class="copy-btn">Копировать</button>
+      <pre><code class="language-bash"># Обновление системы
+apt update && apt upgrade -y
+
+# Базовые утилиты
+apt install -y git curl wget htop tmux jq unzip
+
+# Node.js 22
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+apt install -y nodejs
+
+# Проверка версий
+node -v && npm -v && python3 --version && git --version
+
+# Git настройка
+git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+
+# Рабочая директория
+mkdir -p /opt/workspace && cd /opt/workspace
+
+# Мониторинг
+htop                    # CPU, память, процессы
+df -h                   # место на диске
+free -h                 # оперативная память
+uptime                  # время работы</code></pre>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Claude Code</h3>
+    <div class="code-wrapper">
+      <span class="code-lang">bash</span>
+      <button class="copy-btn">Копировать</button>
+      <pre><code class="language-bash"># Установка
+npm install -g @anthropic-ai/claude-code
+
+# Запуск
+cd /opt/workspace && claude
+
+# Настройка языка
+claude config set language ru
+
+# Внутри Claude Code:
+# /help        — помощь
+# /model       — выбор модели
+# /status      — статус
+# /compact     — сжать контекст
+# /clear       — очистить
+# /permissions — разрешения</code></pre>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Codex CLI</h3>
+    <div class="code-wrapper">
+      <span class="code-lang">bash</span>
+      <button class="copy-btn">Копировать</button>
+      <pre><code class="language-bash"># Установка
+npm install -g @openai/codex
+
+# Запуск
+codex
+
+# Файл инструкций — AGENTS.md (в корне проекта)</code></pre>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>MCP-серверы</h3>
+    <div class="code-wrapper">
+      <span class="code-lang">bash</span>
+      <button class="copy-btn">Копировать</button>
+      <pre><code class="language-bash"># Память
+claude mcp add memory -- npx -y @modelcontextprotocol/server-memory
+
+# Файловая система
+claude mcp add filesystem -- npx -y @anthropic-ai/mcp-filesystem /opt/workspace
+
+# GitHub
+claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=ghp_YOUR_TOKEN \
+  -- npx -y @modelcontextprotocol/server-github
+
+# Context7 (документация)
+claude mcp add context7 -- npx -y @upstash/context7-mcp@latest
+
+# Список MCP
+claude mcp list
+
+# Удалить MCP
+claude mcp remove server-name</code></pre>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Skills (Скиллы)</h3>
+    <div class="code-wrapper">
+      <span class="code-lang">bash</span>
+      <button class="copy-btn">Копировать</button>
+      <pre><code class="language-bash"># Директория скиллов
+mkdir -p ~/.claude/skills
+
+# Посмотреть установленные
+ls ~/.claude/skills/
+
+# Создать скилл (пример)
+cat &gt; ~/.claude/skills/my-skill.md &lt;&lt; 'EOF'
+---
+name: my-skill
+description: Описание скилла
+---
+
+Инструкции для Claude...
+EOF</code></pre>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>Hooks (Хуки)</h3>
+    <div class="code-wrapper">
+      <span class="code-lang">bash</span>
+      <button class="copy-btn">Копировать</button>
+      <pre><code class="language-bash"># Директория хуков
+mkdir -p ~/.claude/hooks
+
+# Сделать исполняемым
+chmod +x ~/.claude/hooks/*.sh
+
+# Настройки хуков
+# ~/.claude/settings.local.json
+
+# Проверить
+ls -la ~/.claude/hooks/
+cat ~/.claude/settings.local.json</code></pre>
+    </div>
+  </div>
+
+  <div class="cheat-section">
+    <h3>tmux (мультиплексор)</h3>
+    <div class="code-wrapper">
+      <span class="code-lang">bash</span>
+      <button class="copy-btn">Копировать</button>
+      <pre><code class="language-bash">tmux                  # новая сессия
+tmux attach           # вернуться к сессии
+tmux ls               # список сессий
+# Ctrl+B, D           — отключиться (сессия живёт)
+# Ctrl+B, C           — новое окно
+# Ctrl+B, N           — следующее окно
+# Ctrl+B, P           — предыдущее окно</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- TROUBLESHOOTING -->
+<section class="tab-pane" id="troubleshooting">
+  <div class="block-header">
+    <h1>Решение проблем</h1>
+    <span class="block-duration">справочник</span>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-problem">SSH не подключается (Connection refused / timeout)</div>
+    <div class="trouble-solution">
+      <ul>
+        <li>Проверьте IP-адрес — опечатка?</li>
+        <li>Порт должен быть <strong>22</strong> (стандартный SSH)</li>
+        <li>VPS только что создан? Подождите 2-3 минуты</li>
+        <li>Проверьте, что VPS запущен в панели хостинга</li>
+        <li>Попробуйте пинг: если хостинг даёт веб-консоль — проверьте через неё</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-problem">Claude Code OAuth — не открывается URL</div>
+    <div class="trouble-solution">
+      <ul>
+        <li>URL нужно открыть <strong>на ноутбуке</strong> в браузере, не на сервере</li>
+        <li>Скопируйте URL полностью (с <code>https://</code>)</li>
+        <li>Убедитесь, что вы залогинены на <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></li>
+        <li>Проверьте, что подписка (Pro или Max) активна</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-problem">MCP timeout / не запускается</div>
+    <div class="trouble-solution">
+      <ul>
+        <li><code>npx</code> скачивает пакет при каждом запуске, что медленно. Установите глобально:</li>
+      </ul>
+      <div class="code-wrapper">
+        <span class="code-lang">bash</span>
+        <button class="copy-btn">Копировать</button>
+        <pre><code class="language-bash"># Вместо npx — глобальная установка
+npm install -g @modelcontextprotocol/server-memory
+npm install -g @anthropic-ai/mcp-filesystem
+npm install -g @modelcontextprotocol/server-github</code></pre>
+      </div>
+      <p>Затем в <code>claude mcp add</code> используйте прямой путь к бинарнику вместо <code>npx</code>.</p>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-problem">Permission denied (нет прав)</div>
+    <div class="trouble-solution">
+      <ul>
+        <li>Для скриптов: <code>chmod +x filename.sh</code></li>
+        <li>Для директорий: <code>chmod 755 /path/to/dir</code></li>
+        <li>Внутри Claude Code: используйте команду <code>/permissions</code> для управления разрешениями</li>
+        <li>Вы работаете под <code>root</code>? Проверьте: <code>whoami</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-problem">Claude Code не отвечает / зависает</div>
+    <div class="trouble-solution">
+      <ul>
+        <li>Выполните <code>/status</code> — проверьте статус подключения</li>
+        <li>Проверьте подписку на <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></li>
+        <li>Попробуйте <code>/clear</code> и начните новый диалог</li>
+        <li>Выйдите (<code>Ctrl+C</code>) и запустите заново: <code>claude</code></li>
+        <li>Проверьте интернет на сервере: <code>curl -s https://api.anthropic.com</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-problem">Codex CLI не авторизуется</div>
+    <div class="trouble-solution">
+      <ul>
+        <li>Попробуйте OAuth через браузер (как с Claude Code)</li>
+        <li>Если OAuth не работает — используйте API Key:</li>
+      </ul>
+      <div class="code-wrapper">
+        <span class="code-lang">bash</span>
+        <button class="copy-btn">Копировать</button>
+        <pre><code class="language-bash"># Установите API ключ OpenAI
+export OPENAI_API_KEY="sk-your-key-here"
+codex</code></pre>
+      </div>
+      <p>Ключ можно получить на <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a>.</p>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-problem">Node.js не найден после установки</div>
+    <div class="trouble-solution">
+      <ul>
+        <li>Повторите установку:</li>
+      </ul>
+      <div class="code-wrapper">
+        <span class="code-lang">bash</span>
+        <button class="copy-btn">Копировать</button>
+        <pre><code class="language-bash">curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+apt install -y nodejs
+node -v</code></pre>
+      </div>
+      <ul>
+        <li>Если ошибка остаётся — проверьте PATH: <code>echo $PATH</code></li>
+        <li>Node.js должен быть в <code>/usr/bin/node</code>: <code>which node</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-problem">npm WARN / npm ERR при установке пакетов</div>
+    <div class="trouble-solution">
+      <ul>
+        <li><code>WARN</code> — обычно можно игнорировать, это предупреждения</li>
+        <li><code>ERR</code> — ошибка. Частые причины:
+          <ul>
+            <li>Нет интернета — проверьте: <code>ping google.com</code></li>
+            <li>Старая версия npm — обновите: <code>npm install -g npm@latest</code></li>
+            <li>Нет места на диске — проверьте: <code>df -h</code></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="trouble-item">
+    <div class="trouble-problem">Потерял соединение — работа пропала</div>
+    <div class="trouble-solution">
+      <ul>
+        <li>Используйте <code>tmux</code>! Запускайте <code>tmux</code> сразу после подключения.</li>
+        <li>Если отключились, подключитесь снова и выполните:</li>
+      </ul>
+      <div class="code-wrapper">
+        <span class="code-lang">bash</span>
+        <button class="copy-btn">Копировать</button>
+        <pre><code class="language-bash">tmux attach</code></pre>
+      </div>
+      <p>Все процессы внутри tmux продолжают работать после отключения.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p>InfraLearn — 2026 | Создано для курса «Свой AI-сервер»</p>
+</footer>
+
+</body>
+</html>
