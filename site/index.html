@@ -246,6 +246,88 @@
     <div class="callout-title">Не подключается?</div>
     <p>Проверьте: правильный ли IP, порт 22, пароль. Если хостинг только создал VPS — подождите 2-3 минуты, сервер может ещё загружаться. Подробнее — на вкладке <strong>Проблемы</strong>.</p>
   </div>
+
+  <h2>Tailscale — приватная сеть между устройствами</h2>
+  <p><a href="https://tailscale.com" target="_blank">Tailscale</a> создаёт защищённую сеть между вашим ноутбуком, телефоном и сервером. После настройки устройства видят друг друга по приватным IP — как в одной локальной сети. Бесплатно до 100 устройств.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">Зачем Tailscale?</div>
+    <ul>
+      <li>Доступ к серверу по приватному IP (не нужно помнить публичный)</li>
+      <li>Шифрованное соединение (WireGuard под капотом)</li>
+      <li>Работает через NAT и файрволы — подключение из любой сети</li>
+      <li>SFTP из Termius на сервер по приватному адресу</li>
+      <li>Доступ с телефона к серверу</li>
+    </ul>
+  </div>
+
+  <h3>Шаг 1: Регистрация</h3>
+  <ol>
+    <li>Зайдите на <a href="https://login.tailscale.com/start" target="_blank">login.tailscale.com/start</a></li>
+    <li>Зарегистрируйтесь через Google, GitHub или email</li>
+    <li>Бесплатный план — Personal, до 100 устройств</li>
+  </ol>
+
+  <h3>Шаг 2: Установка на сервер</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash — на сервере (через Termius)</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Установка Tailscale
+curl -fsSL https://tailscale.com/install.sh | sh
+
+# Запуск и авторизация
+tailscale up</code></pre>
+  </div>
+  <p>Команда <code>tailscale up</code> покажет ссылку — откройте её в браузере на ноутбуке и авторизуйтесь. Сервер появится в вашей сети Tailscale.</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Проверяем — должен показать приватный IP (100.x.x.x)
+tailscale ip -4
+tailscale status</code></pre>
+  </div>
+
+  <h3>Шаг 3: Установка на ноутбук</h3>
+  <div class="callout warning">
+    <div class="callout-title">macOS</div>
+    <p>Скачайте из <strong>App Store</strong>: найдите "Tailscale" → Install → откройте → Log in с тем же аккаунтом.</p>
+  </div>
+  <div class="callout danger">
+    <div class="callout-title">Windows</div>
+    <p>Скачайте с <a href="https://tailscale.com/download/windows" target="_blank">tailscale.com/download/windows</a> → установите → Log in с тем же аккаунтом.</p>
+  </div>
+
+  <h3>Шаг 4: Подключаемся по Tailscale IP</h3>
+  <p>Теперь сервер доступен по приватному IP (100.x.x.x). Узнайте его:</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash — на сервере</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Tailscale IP вашего сервера
+tailscale ip -4
+# Пример: 100.64.0.2</code></pre>
+  </div>
+  <p>В Termius создайте <strong>новый хост</strong>:</p>
+  <ul>
+    <li><strong>Label:</strong> AI Server (Tailscale)</li>
+    <li><strong>Hostname:</strong> 100.x.x.x (ваш Tailscale IP)</li>
+    <li><strong>Port:</strong> 22</li>
+    <li><strong>Username:</strong> root</li>
+    <li><strong>Password:</strong> ваш пароль</li>
+  </ul>
+
+  <h3>Шаг 5: SFTP в Termius</h3>
+  <p>Termius умеет не только SSH, но и SFTP — передача файлов мышкой:</p>
+  <ol>
+    <li>Подключитесь к серверу в Termius</li>
+    <li>Нажмите иконку <strong>SFTP</strong> (папка со стрелкой) в панели слева</li>
+    <li>Слева — файлы ноутбука, справа — файлы сервера</li>
+    <li>Перетаскивайте файлы между сторонами</li>
+  </ol>
+
+  <div class="callout tip">
+    <div class="callout-title">Телефон тоже!</div>
+    <p>Установите Tailscale на телефон (iOS / Android) — и получите доступ к серверу с мобильного. Подключайтесь через Termius Mobile по тому же Tailscale IP.</p>
+  </div>
 </section>
 
 <!-- BLOCK 2 -->
