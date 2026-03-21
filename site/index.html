@@ -707,6 +707,39 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] $TITLE: $MSG" &gt;&gt; "$LOGFILE"
 HOOKEOF
 chmod +x ~/.claude/hooks/notify.sh</code></pre>
   </div>
+
+  <h2>Statusline — информационная строка</h2>
+  <p>Statusline — строка внизу Claude Code, которая показывает полезную информацию: модель, контекст, время сессии, расход.</p>
+
+  <h3>Как выглядит</h3>
+  <div class="code-wrapper">
+    <pre><code>sonnet 4.6 | ▓▓░░░░░░░░ 18% | 1h05m | $2.30
++234,-12 lines</code></pre>
+  </div>
+
+  <h3>Установка</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Копируем скрипт statusline
+cp /opt/workspace/infralearn/configs/statusline.js ~/.claude/statusline.js
+
+# Копируем settings.json (уже содержит statusLine конфиг)
+cp /opt/workspace/infralearn/configs/settings.json ~/.claude/settings.json</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">Что показывает statusline</div>
+    <ul>
+      <li><strong>Модель</strong> — какая модель используется (Opus, Sonnet, Haiku)</li>
+      <li><strong>Контекст</strong> — сколько % окна контекста использовано (прогресс-бар)</li>
+      <li><strong>Время</strong> — длительность сессии</li>
+      <li><strong>Стоимость</strong> — сколько потрачено токенов в $</li>
+      <li><strong>Изменения</strong> — добавленные/удалённые строки кода</li>
+    </ul>
+  </div>
+
+  <p>Перезапустите Claude Code — statusline появится внизу экрана.</p>
 </section>
 
 <!-- BLOCK 7 -->
