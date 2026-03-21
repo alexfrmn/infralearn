@@ -514,27 +514,81 @@ EOF</code></pre>
     <span class="block-duration">40 + 50 мин</span>
   </div>
 
-  <h2>Часть 1: Память (Memory)</h2>
-  <p>По умолчанию Claude Code не помнит предыдущие сессии. MCP-сервер <strong>Memory</strong> решает эту проблему — он сохраняет факты между сессиями в виде графа знаний.</p>
+  <h2>Часть 1: Память — два уровня</h2>
+  <p>По умолчанию Claude Code <strong>забывает всё</strong> после закрытия сессии. Это главная проблема. Решаем её двумя механизмами:</p>
 
-  <h3>Установка Memory</h3>
+  <div class="callout info">
+    <div class="callout-title">Два уровня памяти</div>
+    <ul>
+      <li><strong>MEMORY.md</strong> — встроенная авто-память. Claude сам записывает важное в файл <code>~/.claude/MEMORY.md</code> (до 200 строк). Работает из коробки, ничего ставить не надо.</li>
+      <li><strong>claude-mem (MCP)</strong> — продвинутая память. Граф знаний без лимита: сущности, факты, связи. Нужно установить MCP-сервер.</li>
+    </ul>
+  </div>
+
+  <h3>Уровень 1: MEMORY.md (уже работает!)</h3>
+  <p>Claude Code автоматически создаёт файл <code>~/.claude/MEMORY.md</code> и записывает туда важные вещи из разговора. Проверьте:</p>
   <div class="code-wrapper">
     <span class="code-lang">bash</span>
     <button class="copy-btn">Копировать</button>
-    <pre><code class="language-bash">claude mcp add memory -- npx -y @modelcontextprotocol/server-memory</code></pre>
+    <pre><code class="language-bash"># Посмотреть что Claude уже запомнил
+cat ~/.claude/MEMORY.md</code></pre>
+  </div>
+  <p>Вы можете сами попросить Claude что-то запомнить — он добавит это в MEMORY.md:</p>
+  <div class="code-wrapper">
+    <button class="copy-btn">Копировать</button>
+    <pre><code># Внутри Claude Code скажите:
+Запомни: мой основной язык — Python, я работаю над проектом X</code></pre>
+  </div>
+
+  <h3>Уровень 2: claude-mem (MCP-сервер)</h3>
+  <p>Для серьёзной работы нужен граф знаний — без ограничения в 200 строк. Устанавливаем:</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Устанавливаем MCP-сервер памяти
+claude mcp add memory -- npx -y @modelcontextprotocol/server-memory</code></pre>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">Важно: нужна НОВАЯ сессия!</div>
+    <p>MCP-серверы загружаются при старте сессии. После <code>claude mcp add</code> нужно <strong>выйти</strong> из Claude Code (<code>/exit</code>) и <strong>зайти снова</strong> (<code>claude</code>).</p>
   </div>
 
   <p>После установки Claude Code получает инструменты для работы с памятью:</p>
-  <ul>
-    <li><strong>create_entities</strong> — создать сущности (вы, проекты, серверы)</li>
-    <li><strong>add_observations</strong> — добавить факты к сущностям</li>
-    <li><strong>search_nodes</strong> — поиск по памяти</li>
-    <li><strong>create_relations</strong> — связи между сущностями</li>
-  </ul>
+  <table class="comparison-table">
+    <tr><th>Инструмент</th><th>Что делает</th><th>Пример</th></tr>
+    <tr><td><code>create_entities</code></td><td>Создать сущности</td><td>Вы, проекты, серверы, технологии</td></tr>
+    <tr><td><code>add_observations</code></td><td>Добавить факты</td><td>"Python 3.12", "использует PostgreSQL"</td></tr>
+    <tr><td><code>search_nodes</code></td><td>Поиск по памяти</td><td>Найти всё про "Python"</td></tr>
+    <tr><td><code>create_relations</code></td><td>Связать сущности</td><td>"Проект X" → использует → "PostgreSQL"</td></tr>
+  </table>
+
+  <h3>Тест памяти (обязательно!)</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># 1. Запускаем Claude Code
+claude
+
+# 2. Говорим:
+#    "Запомни: мой любимый язык — Python, я работаю в компании X"
+
+# 3. Выходим:
+#    /exit
+
+# 4. Запускаем снова:
+claude
+
+# 5. Спрашиваем:
+#    "Какой мой любимый язык? Где я работаю?"
+
+# Claude должен ответить правильно из памяти!</code></pre>
+  </div>
 
   <div class="callout tip">
-    <div class="callout-title">Как использовать</div>
-    <p>Просто скажите Claude: «Запомни, что мой основной проект — на Python 3.12, база — PostgreSQL». Он сохранит это в память и вспомнит в следующей сессии.</p>
+    <div class="callout-title">Как это работает</div>
+    <p><strong>MEMORY.md</strong> — простой текстовый файл, Claude читает его при каждом старте. Подходит для базовых фактов.<br>
+    <strong>claude-mem</strong> — граф знаний в JSON. Claude может искать, добавлять и связывать факты. Подходит для сложного контекста: проекты, решения, конфигурации, люди.</p>
   </div>
 
   <h2>Часть 2: MCP-серверы</h2>
