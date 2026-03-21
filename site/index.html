@@ -411,9 +411,99 @@ git config --global user.email "your@email.com"</code></pre>
   </div>
   <p>Все наши проекты будут в <code>/opt/workspace/</code>. Это стандартная практика для серверов.</p>
 
+  <h2>tmux — ваша страховка от обрывов связи</h2>
+
+  <div class="callout danger">
+    <div class="callout-title">Проблема без tmux</div>
+    <p>Вы работаете через Termius. WiFi моргнул, ноутбук заснул, Termius закрылся — и всё, что работало на сервере, <strong>умирает</strong>. Claude Code, Codex, скрипты — всё прерывается. Приходится начинать заново.</p>
+  </div>
+
   <div class="callout tip">
-    <div class="callout-title">Совет: tmux</div>
-    <p>Если потеряете соединение с сервером, вся работа в обычном терминале пропадёт. Используйте <code>tmux</code> — он сохраняет сессию. Запустите <code>tmux</code> перед началом работы, и если отключитесь — подключитесь снова и введите <code>tmux attach</code>.</p>
+    <div class="callout-title">Решение: tmux</div>
+    <p><code>tmux</code> — терминальный мультиплексор. Он создаёт <strong>сессию на сервере</strong>, которая живёт независимо от вашего подключения. Отключились → подключились обратно → <code>tmux attach</code> → всё на месте, как будто никуда не уходили.</p>
+  </div>
+
+  <h3>Основные команды</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Создать новую сессию (делайте это СРАЗУ после подключения!)
+tmux
+
+# Всё! Теперь вы внутри tmux. Работайте как обычно.
+# Claude Code, Codex, скрипты — всё будет жить даже если отключитесь.</code></pre>
+  </div>
+
+  <h3>Отключились? Не паника!</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Подключаемся обратно к серверу через Termius, затем:
+tmux attach
+
+# Если несколько сессий — посмотреть список:
+tmux ls
+
+# Подключиться к конкретной:
+tmux attach -t 0</code></pre>
+  </div>
+
+  <h3>Горячие клавиши внутри tmux</h3>
+  <p>Все команды tmux начинаются с <strong>Ctrl+B</strong> (нажать и отпустить), затем клавиша:</p>
+  <table class="comparison-table">
+    <tr><th>Комбинация</th><th>Действие</th><th>Когда нужно</th></tr>
+    <tr><td><code>Ctrl+B</code>, затем <code>c</code></td><td>Новое окно</td><td>Хотите второй терминал (Claude + Codex одновременно)</td></tr>
+    <tr><td><code>Ctrl+B</code>, затем <code>n</code></td><td>Следующее окно</td><td>Переключиться между окнами</td></tr>
+    <tr><td><code>Ctrl+B</code>, затем <code>p</code></td><td>Предыдущее окно</td><td>Переключиться назад</td></tr>
+    <tr><td><code>Ctrl+B</code>, затем <code>%</code></td><td>Разделить вертикально</td><td>Два терминала рядом</td></tr>
+    <tr><td><code>Ctrl+B</code>, затем <code>"</code></td><td>Разделить горизонтально</td><td>Два терминала сверху/снизу</td></tr>
+    <tr><td><code>Ctrl+B</code>, затем стрелки</td><td>Перемещение между панелями</td><td>Переключаться в split-режиме</td></tr>
+    <tr><td><code>Ctrl+B</code>, затем <code>d</code></td><td>Отключиться (detach)</td><td>Уйти, но оставить сессию живой</td></tr>
+    <tr><td><code>Ctrl+B</code>, затем <code>[</code></td><td>Режим прокрутки</td><td>Прокрутить вверх (выход — <code>q</code>)</td></tr>
+  </table>
+
+  <h3>Типичный рабочий день</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Утро: подключился через Termius
+tmux                         # или tmux attach если сессия уже есть
+
+# Окно 1: Claude Code
+cd /opt/workspace && claude
+
+# Ctrl+B, c — новое окно
+# Окно 2: Codex
+cd /opt/workspace && codex
+
+# Ctrl+B, n / p — переключаемся между Claude и Codex
+# Ctrl+B, d — отсоединяемся (сессии живут!)
+
+# Вечер: подключился с телефона через Termius Mobile
+tmux attach                  # всё на месте!</code></pre>
+  </div>
+
+  <h3>Именованные сессии (продвинуто)</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Создать сессию с именем
+tmux new -s work
+
+# Подключиться к именованной сессии
+tmux attach -t work
+
+# Список всех сессий
+tmux ls
+# work: 2 windows (created Sat Mar 21 14:30:00 2026)
+
+# Убить сессию (когда больше не нужна)
+tmux kill-session -t work</code></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">Золотое правило</div>
+    <p><strong>Подключился к серверу → сразу <code>tmux</code></strong> (или <code>tmux attach</code> если сессия уже была). Это должно стать привычкой. Без tmux любой обрыв связи = потеря работы.</p>
   </div>
 </section>
 
