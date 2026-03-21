@@ -454,56 +454,84 @@ cp /opt/workspace/infralearn/configs/CLAUDE.md ~/.claude/CLAUDE.md</code></pre>
   </ul>
 
   <h2>Часть 2: Skills (Скиллы)</h2>
-  <p>Скиллы — это готовые наборы инструкций для типовых задач. Вместо того чтобы каждый раз объяснять Claude, как деплоить, коммитить или писать тесты, вы вызываете скилл одной командой.</p>
+  <p>Скилл — переиспользуемый промпт-шаблон. Вместо того чтобы каждый раз объяснять Claude задачу с нуля, вызываете скилл одной командой: <code>/code-review</code>, <code>/compress</code> и т.д.</p>
 
-  <h3>Устанавливаем скиллы</h3>
-  <div class="code-wrapper">
-    <span class="code-lang">bash</span>
-    <button class="copy-btn">Копировать</button>
-    <pre><code class="language-bash"># Копируем скиллы из репозитория курса
-mkdir -p ~/.claude/skills
-cp -r /opt/workspace/infralearn/skills/* ~/.claude/skills/</code></pre>
+  <div class="callout info">
+    <div class="callout-title">Структура скилла</div>
+    <p>Каждый скилл — папка с файлом <code>SKILL.md</code> внутри:<br>
+    <code>~/.claude/skills/[имя-скилла]/SKILL.md</code></p>
   </div>
+
+  <h3>Шаг 1: Устанавливаем скиллы из репо</h3>
   <div class="code-wrapper">
     <span class="code-lang">bash</span>
     <button class="copy-btn">Копировать</button>
-    <pre><code class="language-bash"># Проверяем, что скиллы на месте
+    <pre><code class="language-bash"># Копируем 4 готовых скилла из репозитория курса
+mkdir -p ~/.claude/skills
+cp -r /opt/workspace/infralearn/skills/* ~/.claude/skills/
+
+# Проверяем
 ls ~/.claude/skills/</code></pre>
   </div>
 
-  <h3>Как использовать скиллы</h3>
-  <p>Внутри Claude Code введите <code>/</code> и начните набирать название скилла. Claude покажет список доступных. Например:</p>
-  <ul>
-    <li><code>/commit</code> — создать осмысленный коммит</li>
-    <li><code>/review</code> — ревью кода</li>
-    <li><code>/deploy</code> — деплой проекта</li>
-  </ul>
+  <h3>Наши 4 скилла</h3>
+  <table class="comparison-table">
+    <tr><th>Скилл</th><th>Вызов</th><th>Что делает</th></tr>
+    <tr><td><strong>code-review</strong></td><td><code>/code-review</code></td><td>Ревью кода: баги, безопасность, читаемость. Оценка 1-10</td></tr>
+    <tr><td><strong>decision-helper</strong></td><td><code>/decision-helper</code></td><td>Помощь в решениях: pros/cons, рекомендация</td></tr>
+    <tr><td><strong>compress</strong></td><td><code>/compress</code></td><td>Сжатие контекста когда заканчивается окно</td></tr>
+    <tr><td><strong>exa-web-research</strong></td><td><code>/exa-web-research</code></td><td>Исследование в интернете через Exa MCP</td></tr>
+  </table>
 
-  <h3>Создаём свой скилл</h3>
-  <p>Скилл — это обычный Markdown-файл. Создадим простой:</p>
+  <h3>Шаг 2: Тестируем</h3>
+  <div class="code-wrapper">
+    <button class="copy-btn">Копировать</button>
+    <pre><code># Внутри Claude Code:
+
+# Ревью вашего кода:
+/code-review
+
+# Помощь с решением:
+/decision-helper
+Помоги выбрать: Flask или FastAPI для REST API?
+
+# Исследование (нужен Exa MCP):
+/exa-web-research
+Найди лучшие практики деплоя Python 2026</code></pre>
+  </div>
+
+  <h3>Шаг 3: Создаём свой скилл</h3>
+  <p>Скилл — папка с SKILL.md файлом. Создадим скилл «статус сервера»:</p>
   <div class="code-wrapper">
     <span class="code-lang">bash</span>
     <button class="copy-btn">Копировать</button>
-    <pre><code class="language-bash">cat &gt; ~/.claude/skills/hello.md &lt;&lt; 'EOF'
+    <pre><code class="language-bash"># Создаём папку скилла
+mkdir -p ~/.claude/skills/server-status
+
+# Пишем SKILL.md
+cat &gt; ~/.claude/skills/server-status/SKILL.md &lt;&lt; 'EOF'
 ---
-name: hello
-description: Приветствие и статус сервера
+name: server-status
+description: Показать статус сервера — CPU, RAM, диск, uptime
 ---
 
-Покажи:
-1. Текущее время на сервере
+# Server Status
+
+Покажи текущий статус сервера:
+1. Дата и время
 2. Uptime
-3. Загрузку CPU и памяти (htop-style)
-4. Свободное место на диске
+3. CPU нагрузка (load average)
+4. Оперативная память (free -h)
+5. Свободное место на диске (df -h /)
 
-Формат: компактный, в одном сообщении.
+Формат: компактный, в одном сообщении, с emoji.
 EOF</code></pre>
   </div>
-  <p>Теперь в Claude Code можно вызвать <code>/hello</code>, и он покажет статус сервера.</p>
+  <p>Теперь в Claude Code вызовите <code>/server-status</code> — он покажет всё в красивом формате.</p>
 
   <div class="callout tip">
     <div class="callout-title">Совет</div>
-    <p>Начните с 3-5 скиллов для повседневных задач. Со временем вы накопите библиотеку, которая сэкономит часы.</p>
+    <p>Начните с наших 4 скиллов. Потом создавайте свои под ваши задачи. Хороший скилл = экономия 5-10 минут каждый раз.</p>
   </div>
 </section>
 
