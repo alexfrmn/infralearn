@@ -1052,6 +1052,75 @@ cp /opt/workspace/infralearn/configs/settings.json ~/.claude/settings.json</code
     <div class="callout-title">Когда что использовать</div>
     <p><strong>Claude Code</strong> — основной инструмент. MCP, скиллы и хуки делают его мощнее. <strong>Codex CLI</strong> — второе мнение и альтернативный подход. Иногда одна модель справляется лучше другой с конкретной задачей.</p>
   </div>
+
+  <h2>Шаг 5. codex-start + Статусная строка</h2>
+  <p>Настроим для Codex удобный старт и информационную строку — как мы сделали для Claude Code.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">Как это работает</div>
+    <p>Codex CLI не имеет встроенных хуков и MCP как Claude Code. Но у него есть <code>/statusline</code> (нативная) и можно создать стартовый скрипт <code>codex-start</code>.</p>
+  </div>
+
+  <h3>Промпт для Codex: настройка codex-start и statusline</h3>
+  <p>Скопируйте этот промпт и вставьте <strong>внутри Codex</strong> — он сам всё настроит:</p>
+  <div class="code-wrapper">
+    <button class="copy-btn">Копировать</button>
+    <pre><code>Настрой для меня удобный старт Codex и статусную строку.
+
+1. ИССЛЕДУЙ ОКРУЖЕНИЕ:
+   - есть ли codex в PATH
+   - есть ли ~/.codex и ~/.codex/config.toml
+   - какой shell (bash/zsh), есть ли ~/.local/bin
+   - используется ли tmux
+
+2. СОЗДАЙ КОМАНДУ codex-start:
+   - исполняемый скрипт в ~/.local/bin/codex-start
+   - без root, user-space
+   - при запуске показывает:
+     - дату, cwd, git branch
+     - наличие AGENTS.md
+     - наличие ~/.codex/config.toml
+     - короткий статус: "всё готово к работе"
+   - добавь ~/.local/bin в PATH если нет
+
+3. СТАТУСНАЯ СТРОКА:
+   - проверь, поддерживает ли текущий Codex /statusline
+   - если да — покажи как включить и что она показывает
+   - если нет — создай простой вариант через codex-start
+
+4. ДОКУМЕНТАЦИЯ:
+   - где лежат созданные файлы
+   - как запускать codex-start
+   - как использовать /statusline
+
+Не коммить и не пушь. Покажи что создал и как проверить.</code></pre>
+  </div>
+
+  <h3>После выполнения промпта</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Проверяем что codex-start создался
+which codex-start
+
+# Запускаем
+codex-start
+
+# Внутри Codex — проверяем статусную строку
+/statusline</code></pre>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">Ограничения Codex vs Claude Code</div>
+    <table class="comparison-table">
+      <tr><th>Возможность</th><th>Claude Code</th><th>Codex CLI</th></tr>
+      <tr><td>Статусная строка</td><td>Через settings.json + скрипт</td><td>Через /statusline (нативная)</td></tr>
+      <tr><td>Хуки</td><td>SessionStart, PreToolUse и др.</td><td>Нет</td></tr>
+      <tr><td>Стартовый скрипт</td><td>Через хуки</td><td>Через codex-start (наш скрипт)</td></tr>
+      <tr><td>MCP серверы</td><td>16+ серверов</td><td>Нет</td></tr>
+      <tr><td>Память</td><td>MEMORY.md + claude-mem</td><td>Нет</td></tr>
+    </table>
+  </div>
 </section>
 
 <!-- BLOCK 8 -->
