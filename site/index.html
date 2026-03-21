@@ -770,6 +770,36 @@ dir my-vault</code></pre>
     Или установите <strong>GitHub Desktop</strong> (<a href="https://desktop.github.com" target="_blank">desktop.github.com</a>) — он сохранит авторизацию и можно клонировать через GUI.</p>
   </div>
 
+  <div class="callout danger">
+    <div class="callout-title">macOS: Obsidian Git не может пушить (SSH ошибка)</div>
+    <p>На macOS Obsidian — sandboxed приложение. Плагин Obsidian Git <strong>не имеет доступа к SSH-ключам</strong> (~/.ssh/) и не может пушить через SSH. Ошибка: <code>git@github.com: Permission denied</code>.</p>
+    <p><strong>Решение — переключить remote на HTTPS:</strong></p>
+  </div>
+  <div class="code-wrapper">
+    <span class="code-lang">bash — macOS Terminal</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Перейти в папку vault
+cd ~/my-vault
+
+# Проверить текущий remote (если SSH — нужно менять)
+git remote -v
+# Если видите: git@github.com:USER/my-vault.git — это SSH, не будет работать
+
+# Переключить на HTTPS:
+git remote set-url origin https://github.com/ВАШ_USERNAME/my-vault.git
+
+# Проверить
+git remote -v
+# Должно быть: https://github.com/ВАШ_USERNAME/my-vault.git
+
+# Сохранить пароль (PAT) чтобы не вводить каждый раз
+git config --global credential.helper osxkeychain</code></pre>
+  </div>
+  <div class="callout tip">
+    <div class="callout-title">После этого</div>
+    <p>Obsidian Git сможет пушить. При первом push введите GitHub username и <strong>Personal Access Token</strong> вместо пароля. macOS Keychain запомнит — больше вводить не придётся.</p>
+  </div>
+
   <h3>Шаг 4: Открываем vault в Obsidian</h3>
   <ol>
     <li>Скачайте <a href="https://obsidian.md" target="_blank">Obsidian</a> если ещё не установлен</li>
