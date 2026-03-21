@@ -60,21 +60,76 @@
     <li><strong>Приватность</strong> — ваши файлы, ключи API и проекты хранятся на вашем сервере, а не на чужом компьютере.</li>
   </ul>
 
-  <h2>Архитектура</h2>
-  <p>Схема того, как всё работает:</p>
-  <div class="ascii-diagram">
-+-------------+      SSH       +------------------+      API       +--------------+
-|             | -------------->|                  | -------------->|              |
-|   Ноутбук   |   (Termius)   |   VPS (Ubuntu)   |   (HTTPS)     | Claude / GPT |
-|             | <--------------|                  | <--------------|              |
-+-------------+                +------------------+                +--------------+
-                                |                |
-                                | Claude Code    |
-                                | Codex CLI      |
-                                | MCP-серверы    |
-                                | Хуки + Скиллы  |
-                                | CLAUDE.md      |
-                                +----------------+</div>
+  <h2>Почему сервер, а не ноутбук?</h2>
+
+  <h3>Вариант 1: Claude Code на ноутбуке (опасно через VPN)</h3>
+  <svg viewBox="0 0 800 220" style="width:100%;max-width:800px;margin:1rem auto;display:block" xmlns="http://www.w3.org/2000/svg">
+    <!-- Laptop -->
+    <rect x="10" y="40" width="160" height="90" rx="8" fill="#fff4ef" stroke="#ff6b35" stroke-width="2"/>
+    <text x="90" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#1a1a2e">Ноутбук</text>
+    <text x="90" y="90" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#6c757d">Claude Code</text>
+    <text x="90" y="108" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#6c757d">Файлы, ключи</text>
+    <!-- Arrow 1 -->
+    <line x1="170" y1="85" x2="280" y2="85" stroke="#ff6b35" stroke-width="2" stroke-dasharray="6,4"/>
+    <polygon points="280,80 290,85 280,90" fill="#ff6b35"/>
+    <!-- VPN -->
+    <rect x="290" y="55" width="120" height="60" rx="8" fill="#fdeced" stroke="#e63946" stroke-width="2"/>
+    <text x="350" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="600" fill="#e63946">VPN</text>
+    <text x="350" y="96" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#e63946">шифрует трафик</text>
+    <!-- Arrow 2 -->
+    <line x1="410" y1="85" x2="480" y2="85" stroke="#e63946" stroke-width="2"/>
+    <polygon points="480,80 490,85 480,90" fill="#e63946"/>
+    <!-- API -->
+    <rect x="490" y="55" width="130" height="60" rx="8" fill="#eef0ff" stroke="#4361ee" stroke-width="2"/>
+    <text x="555" y="80" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="600" fill="#4361ee">Anthropic API</text>
+    <text x="555" y="96" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#6c757d">Claude / GPT</text>
+    <!-- Warning -->
+    <rect x="10" y="150" width="610" height="50" rx="6" fill="#fdeced" stroke="#e63946" stroke-width="1.5"/>
+    <text x="25" y="175" font-family="Inter,sans-serif" font-size="12" fill="#e63946" font-weight="600">⚠ Проблемы:</text>
+    <text x="120" y="175" font-family="Inter,sans-serif" font-size="11" fill="#1a1a2e">Ноут выключил = всё пропало • VPN обрыв = сессия потеряна • Нет 24/7 • Файлы только локально</text>
+  </svg>
+
+  <h3>Вариант 2: Claude Code на сервере (правильно)</h3>
+  <svg viewBox="0 0 800 280" style="width:100%;max-width:800px;margin:1rem auto;display:block" xmlns="http://www.w3.org/2000/svg">
+    <!-- Laptop -->
+    <rect x="10" y="60" width="140" height="80" rx="8" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+    <text x="80" y="90" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="#1a1a2e">Ноутбук</text>
+    <text x="80" y="108" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#6c757d">Termius (SSH)</text>
+    <text x="80" y="123" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#6c757d">Obsidian</text>
+    <!-- Arrow SSH -->
+    <line x1="150" y1="100" x2="240" y2="100" stroke="#2ec4b6" stroke-width="2.5"/>
+    <polygon points="240,95 252,100 240,105" fill="#2ec4b6"/>
+    <text x="196" y="92" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#2ec4b6" font-weight="600">SSH</text>
+    <!-- Server -->
+    <rect x="255" y="20" width="260" height="200" rx="10" fill="#e8faf8" stroke="#2ec4b6" stroke-width="2.5"/>
+    <text x="385" y="48" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="#1a1a2e">VPS (Ubuntu 24.04)</text>
+    <text x="385" y="65" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#6c757d">4vCPU • 4GB RAM • 40GB • USA</text>
+    <!-- Components inside server -->
+    <rect x="275" y="78" width="110" height="28" rx="4" fill="#4361ee" opacity="0.9"/>
+    <text x="330" y="97" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#fff" font-weight="600">Claude Code</text>
+    <rect x="395" y="78" width="100" height="28" rx="4" fill="#10a37f" opacity="0.9"/>
+    <text x="445" y="97" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="#fff" font-weight="600">Codex CLI</text>
+    <rect x="275" y="115" width="220" height="24" rx="4" fill="#fff" stroke="#dee2e6" stroke-width="1"/>
+    <text x="385" y="132" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#6c757d">MCP: Memory • GitHub • Filesystem • Exa</text>
+    <rect x="275" y="147" width="220" height="24" rx="4" fill="#fff" stroke="#dee2e6" stroke-width="1"/>
+    <text x="385" y="164" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#6c757d">CLAUDE.md • Skills • Hooks • Statusline</text>
+    <rect x="275" y="179" width="220" height="24" rx="4" fill="#fff" stroke="#dee2e6" stroke-width="1"/>
+    <text x="385" y="196" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#6c757d">Obsidian Vault • Upload Bot • OpenVPN</text>
+    <!-- Arrow to API -->
+    <line x1="515" y1="92" x2="580" y2="92" stroke="#4361ee" stroke-width="2"/>
+    <polygon points="580,87 592,92 580,97" fill="#4361ee"/>
+    <text x="548" y="84" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" fill="#4361ee" font-weight="600">API</text>
+    <!-- API boxes -->
+    <rect x="595" y="45" width="130" height="40" rx="6" fill="#eef0ff" stroke="#4361ee" stroke-width="1.5"/>
+    <text x="660" y="70" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#4361ee">Anthropic (Claude)</text>
+    <rect x="595" y="95" width="130" height="40" rx="6" fill="#e6f7f0" stroke="#10a37f" stroke-width="1.5"/>
+    <text x="660" y="120" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#10a37f">OpenAI (GPT)</text>
+    <rect x="595" y="145" width="130" height="40" rx="6" fill="#f0f0ff" stroke="#6c757d" stroke-width="1.5"/>
+    <text x="660" y="170" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" font-weight="600" fill="#6c757d">GitHub, Exa, MCP</text>
+    <!-- Success -->
+    <rect x="10" y="240" width="715" height="30" rx="6" fill="#e8faf8" stroke="#2ec4b6" stroke-width="1.5"/>
+    <text x="25" y="260" font-family="Inter,sans-serif" font-size="12" fill="#065f46" font-weight="600">✅ Сервер работает 24/7 • Память сохраняется • Файлы на месте • VPN бонусом • Два AI-ассистента</text>
+  </svg>
 
   <h2>Что мы настроим за день</h2>
   <ol>
@@ -515,13 +570,27 @@ claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=ghp_YOUR_TOKEN \
   </div>
   <p>Даёт Claude Code доступ к актуальной документации Python, Node.js и других библиотек. Больше никаких устаревших ответов.</p>
 
+  <h3>Exa — Веб-поиск</h3>
+  <div class="callout warning">
+    <div class="callout-title">Нужен API ключ Exa</div>
+    <p>Зарегистрируйтесь на <a href="https://exa.ai" target="_blank">exa.ai</a> и получите API ключ (есть бесплатный план).</p>
+  </div>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Замените YOUR_EXA_API_KEY на ваш ключ!
+claude mcp add exa -e EXA_API_KEY=YOUR_EXA_API_KEY \
+  -- npx -y exa-mcp-server</code></pre>
+  </div>
+  <p>Exa даёт Claude Code возможность искать актуальную информацию в интернете. Используйте скилл <code>/exa-web-research</code> для структурированных исследований.</p>
+
   <h3>Проверяем установленные MCP</h3>
   <div class="code-wrapper">
     <span class="code-lang">bash</span>
     <button class="copy-btn">Копировать</button>
     <pre><code class="language-bash">claude mcp list</code></pre>
   </div>
-  <p>Должны увидеть список из 4 серверов: <code>memory</code>, <code>filesystem</code>, <code>github</code>, <code>context7</code>.</p>
+  <p>Должны увидеть список из 5 серверов: <code>memory</code>, <code>filesystem</code>, <code>github</code>, <code>context7</code>, <code>exa</code>.</p>
 
   <h2>Часть 3: Obsidian Vault на сервере</h2>
   <p>Создадим базу знаний (vault) прямо на сервере. Это удобно для хранения заметок, документации и всего, что Claude должен помнить.</p>
@@ -749,21 +818,55 @@ openclaw start</code></pre>
     <p>OpenClaw требует активную подписку Claude. Убедитесь, что Claude Code работает на сервере перед настройкой OpenClaw.</p>
   </div>
 
-  <h2>VPN: WireGuard за 5 минут</h2>
-  <p>Раз у вас есть VPS в USA — можно поднять VPN для обхода ограничений.</p>
+  <h2>VPN: OpenVPN за 10 минут</h2>
+  <p>Раз у вас есть VPS в USA — можно поднять свой VPN. OpenVPN — проверенное решение, работает на всех платформах.</p>
+
   <div class="code-wrapper">
     <span class="code-lang">bash</span>
     <button class="copy-btn">Копировать</button>
-    <pre><code class="language-bash"># Устанавливаем WireGuard через скрипт
-curl -O https://raw.githubusercontent.com/angristan/wireguard-install/master/wireguard-install.sh
-chmod +x wireguard-install.sh
-./wireguard-install.sh</code></pre>
+    <pre><code class="language-bash"># Скачиваем установщик OpenVPN
+curl -O https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
+chmod +x openvpn-install.sh
+sudo ./openvpn-install.sh</code></pre>
   </div>
-  <p>Скрипт задаст несколько вопросов (можно оставить всё по умолчанию) и создаст конфигурацию клиента. Файл конфига можно скачать на телефон через QR-код.</p>
+
+  <div class="callout info">
+    <div class="callout-title">Что отвечать на вопросы установщика</div>
+    <ul>
+      <li><strong>IP address:</strong> оставьте по умолчанию (ваш IP)</li>
+      <li><strong>IPv6:</strong> n</li>
+      <li><strong>Port:</strong> 1194 (по умолчанию)</li>
+      <li><strong>Protocol:</strong> UDP</li>
+      <li><strong>DNS:</strong> 3 (Cloudflare)</li>
+      <li><strong>Compression:</strong> n</li>
+      <li><strong>Encryption:</strong> по умолчанию</li>
+      <li><strong>Client name:</strong> phone (или laptop)</li>
+    </ul>
+  </div>
+
+  <p>После установки файл конфигурации клиента появится в <code>~/phone.ovpn</code></p>
+
+  <h3>Как подключиться</h3>
+  <ol>
+    <li>Скачайте файл <code>.ovpn</code> на ноутбук/телефон (через Upload2Server бот или SFTP в Termius)</li>
+    <li>Установите <strong>OpenVPN Connect</strong> (App Store / Google Play / Desktop)</li>
+    <li>Импортируйте файл <code>.ovpn</code></li>
+    <li>Подключитесь!</li>
+  </ol>
+
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Добавить ещё клиента (laptop, tablet и т.д.)
+sudo ./openvpn-install.sh
+
+# Проверить статус OpenVPN
+sudo systemctl status openvpn-server@server</code></pre>
+  </div>
 
   <div class="callout tip">
     <div class="callout-title">Совет</div>
-    <p>Установите приложение WireGuard на телефон/компьютер, импортируйте конфиг — и VPN готов. Скорость будет хорошая, так как сервер в USA.</p>
+    <p>Создайте отдельный клиент для каждого устройства (phone, laptop, tablet). Так можно отозвать доступ для конкретного устройства если потеряете его.</p>
   </div>
 </section>
 
@@ -923,6 +1026,9 @@ claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=ghp_YOUR_TOKEN \
 
 # Context7 (документация)
 claude mcp add context7 -- npx -y @upstash/context7-mcp@latest
+
+# Exa (веб-поиск)
+claude mcp add exa -e EXA_API_KEY=YOUR_KEY -- npx -y exa-mcp-server
 
 # Список MCP
 claude mcp list
