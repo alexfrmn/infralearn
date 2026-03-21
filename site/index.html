@@ -688,7 +688,80 @@ git add . && git commit -m "init vault"</code></pre>
 
   <div class="callout tip">
     <div class="callout-title">Зачем vault на сервере?</div>
-    <p>Claude Code может читать и писать в vault через MCP filesystem. Это значит, что он может сам создавать заметки, искать по ним и использовать как долгосрочную память. Если вы используете Obsidian на компьютере — синхронизируйте через Git.</p>
+    <p>Claude Code может читать и писать в vault через MCP filesystem. Он сам создаёт заметки, ищет по ним и использует как долгосрочную память. Синхронизация с Obsidian на компьютере — через Git.</p>
+  </div>
+
+  <h3>Шаг 2: Создаём GitHub репозиторий для vault</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># На сервере: создаём приватный репозиторий и пушим
+cd /opt/workspace/vault
+gh repo create my-vault --private --source=. --push</code></pre>
+  </div>
+  <div class="callout warning">
+    <div class="callout-title">Нужна авторизация GitHub CLI</div>
+    <p>Если <code>gh</code> не установлен или не авторизован:</p>
+  </div>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Установка GitHub CLI
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt update && sudo apt install gh -y
+
+# Авторизация (выберите HTTPS и Browser)
+gh auth login</code></pre>
+  </div>
+
+  <h3>Шаг 3: Клонируем vault на компьютер</h3>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># На компьютере (в Terminal / PowerShell):
+git clone https://github.com/ВАШ_USERNAME/my-vault.git</code></pre>
+  </div>
+  <p>Откройте склонированную папку <code>my-vault</code> в Obsidian: <strong>Open folder as vault</strong>.</p>
+
+  <h3>Шаг 4: Настраиваем плагин Obsidian Git</h3>
+  <p>Плагин автоматически синхронизирует vault между компьютером и сервером через Git.</p>
+  <ol>
+    <li>В Obsidian: <strong>Settings</strong> (шестерёнка) → <strong>Community plugins</strong></li>
+    <li>Нажмите <strong>Turn on community plugins</strong> (если первый раз)</li>
+    <li>Нажмите <strong>Browse</strong> → в поиске введите <strong>Obsidian Git</strong></li>
+    <li>Нажмите <strong>Install</strong> → затем <strong>Enable</strong></li>
+  </ol>
+
+  <h3>Шаг 5: Настройки плагина Obsidian Git</h3>
+  <p>В Obsidian: <strong>Settings → Community plugins → Obsidian Git → Options</strong></p>
+  <table class="comparison-table">
+    <tr><th>Настройка</th><th>Значение</th><th>Зачем</th></tr>
+    <tr><td>Auto backup every X minutes</td><td><strong>5</strong></td><td>Автоматический коммит и пуш каждые 5 минут</td></tr>
+    <tr><td>Auto pull on startup</td><td><strong>ON</strong></td><td>При открытии Obsidian — скачать свежее с сервера</td></tr>
+    <tr><td>Auto pull interval</td><td><strong>5</strong></td><td>Проверять обновления с сервера каждые 5 минут</td></tr>
+    <tr><td>Commit message</td><td><strong>vault auto-sync</strong></td><td>Сообщение для авто-коммитов</td></tr>
+    <tr><td>Push on backup</td><td><strong>ON</strong></td><td>Сразу отправлять на GitHub после коммита</td></tr>
+  </table>
+
+  <h3>Шаг 6: Синхронизация с сервером</h3>
+  <p>Теперь vault синхронизируется автоматически. Но на сервере тоже нужно получать изменения:</p>
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># На сервере: получить свежие заметки с компьютера
+cd /opt/workspace/vault
+git pull
+
+# Отправить изменения сервера на компьютер
+git add . && git commit -m "server update" && git push</code></pre>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">Итог: двусторонняя синхронизация</div>
+    <p><strong>Компьютер (Obsidian)</strong> → плагин Git → автоматический push каждые 5 минут<br>
+    <strong>Сервер (Claude Code)</strong> → <code>git pull</code> получает свежее, <code>git push</code> отправляет<br>
+    <strong>Результат:</strong> пишете заметку в Obsidian — Claude видит её на сервере. Claude создаёт заметку — вы видите её в Obsidian.</p>
   </div>
 </section>
 
