@@ -1,0 +1,15 @@
+[Unit]
+Description=Upload2Server Telegram Bot
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/workspace/upload-bot
+ExecStart=/opt/workspace/upload-bot/venv/bin/python bot.py
+Restart=always
+RestartSec=5
+EnvironmentFile=/opt/workspace/upload-bot/.env
+
+[Install]
+WantedBy=multi-user.target
