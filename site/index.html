@@ -1958,19 +1958,112 @@ node -v</code></pre>
   </div>
 
   <h2>Part 1 — Основной воркшоп (5ч 15мин)</h2>
-  <p>Загружаю таймкоды...</p>
+
+  <h3>Введение и подготовка</h3>
   <ul class="timestamp-list" id="timestamps-part1">
-    <li><span class="ts-time">00:00</span><span class="ts-desc">Введение: AI Mindset, Александр Повалыев представляет воркшоп</span></li>
-    <li><span class="ts-time">03:21</span><span class="ts-desc">Александр Васильев: кто я, зачем этот воркшоп</span></li>
-    <li><span class="ts-time">04:57</span><span class="ts-desc">Баны Claude Max за локацию РФ — сервер решает проблему</span></li>
-    <li><span class="ts-time">05:26</span><span class="ts-desc">Обзор программы: 10 блоков + бонусы</span></li>
+    <li><span class="ts-time">00:00</span><span class="ts-desc">Вступление от AI Mindset (Александр Повалиев)</span></li>
+    <li><span class="ts-time">03:21</span><span class="ts-desc">Александр Васильев: кто я, компания ДОРФА, серверы + AI</span></li>
+    <li><span class="ts-time">04:57</span><span class="ts-desc">Обзор плана: Claude Code, Codex CLI, OpenVPN, бонусы</span></li>
     <li><span class="ts-time">06:43</span><span class="ts-desc">Знакомство участников, ожидания, боли</span></li>
-    <li><span class="ts-time">09:04</span><span class="ts-desc">Antigravity, Google блокировки, обходы</span></li>
+    <li><span class="ts-time">09:04</span><span class="ts-desc">Обсуждение VPN-блокировок: Google, Anthropic, Antigravity</span></li>
+    <li><span class="ts-time">14:33</span><span class="ts-desc">Начинаем! Логин на InfraLearn</span></li>
+    <li><span class="ts-time">15:31</span><span class="ts-desc">Зачем свой сервер: 24/7 доступ, память, приватность</span></li>
+    <li><span class="ts-time">17:02</span><span class="ts-desc">Почему сервер, а не ноутбук: ТСПУ, шифрование, безопасность</span></li>
   </ul>
-  <div class="callout info">
-    <div class="callout-title">Обновление</div>
-    <p>Полные таймкоды Part 1 будут добавлены после обработки 5-часового транскрипта.</p>
-  </div>
+
+  <h3>Блок 1-2: VPS + Сервер</h3>
+  <ul class="timestamp-list">
+    <li><span class="ts-time">22:03</span><span class="ts-desc">Регистрация на 4vps.su — покупка сервера</span></li>
+    <li><span class="ts-time">24:07</span><span class="ts-desc">Выбор: США, Феникс, CX31, Ubuntu 24.04</span></li>
+    <li><span class="ts-time">28:07</span><span class="ts-desc">Почему не UK: регуляторные ограничения, KYC</span></li>
+    <li><span class="ts-time">35:10</span><span class="ts-desc">Установка и настройка Termius (SSH-клиент)</span></li>
+    <li><span class="ts-time">38:50</span><span class="ts-desc">Подключение к серверу через Termius</span></li>
+    <li><span class="ts-time">46:19</span><span class="ts-desc">Обновление системы, базовые утилиты</span></li>
+    <li><span class="ts-time">51:06</span><span class="ts-desc">Установка Node.js, проверка версий</span></li>
+    <li><span class="ts-time">54:22</span><span class="ts-desc">Настройка Git: user.name, user.email</span></li>
+  </ul>
+
+  <h3>Блок 3: Claude Code</h3>
+  <ul class="timestamp-list">
+    <li><span class="ts-time">56:00</span><span class="ts-desc">Установка Claude Code (npm install)</span></li>
+    <li><span class="ts-time">1:03:23</span><span class="ts-desc">Первый запуск Claude Code</span></li>
+    <li><span class="ts-time">1:05:47</span><span class="ts-desc">Авторизация через OAuth (копирование URL, вставка кода)</span></li>
+    <li><span class="ts-time">1:07:06</span><span class="ts-desc">Troubleshooting: пробелы в URL при копировании</span></li>
+    <li><span class="ts-time">1:16:25</span><span class="ts-desc">Настройка: модель Opus 4.6, effort, язык</span></li>
+    <li><span class="ts-time">1:17:49</span><span class="ts-desc">Разница Pro vs Max: контекст 1 млн на Max</span></li>
+    <li><span class="ts-time">1:23:42</span><span class="ts-desc">Чем терминальный Claude лучше браузерного</span></li>
+    <li><span class="ts-time">1:24:37</span><span class="ts-desc">Базовые команды: /help, /status, /permissions</span></li>
+  </ul>
+
+  <h3>Блок 4: CLAUDE.md + Скиллы</h3>
+  <ul class="timestamp-list">
+    <li><span class="ts-time">1:28:20</span><span class="ts-desc">CLAUDE.md — системный промпт для Claude</span></li>
+    <li><span class="ts-time">1:31:19</span><span class="ts-desc">Автоматизация: «скопируй и скажи давай сделаем»</span></li>
+    <li><span class="ts-time">1:34:07</span><span class="ts-desc">Лайфхак: перенести контекст из браузерного Claude на сервер</span></li>
+    <li><span class="ts-time">1:36:05</span><span class="ts-desc">Философия: Claude = крутой сотрудник, надо помочь настроиться</span></li>
+    <li><span class="ts-time">1:46:08</span><span class="ts-desc">Перерыв ~20 минут</span></li>
+  </ul>
+
+  <h3>После перерыва: скиллы, Exa, память</h3>
+  <ul class="timestamp-list">
+    <li><span class="ts-time">2:01:18</span><span class="ts-desc">Продолжение после перерыва</span></li>
+    <li><span class="ts-time">2:02:19</span><span class="ts-desc">SFTP в Termius: просмотр файлов на сервере</span></li>
+    <li><span class="ts-time">2:05:04</span><span class="ts-desc">Upload2Server бот: обмен файлами через Telegram</span></li>
+    <li><span class="ts-time">2:07:34</span><span class="ts-desc">Демо: /jarvis-start — полная инициализация с памятью</span></li>
+    <li><span class="ts-time">2:10:03</span><span class="ts-desc">Разница между хуками и скиллами</span></li>
+    <li><span class="ts-time">2:12:17</span><span class="ts-desc">Установка скиллов: hello, code-review, compress, exa-research</span></li>
+    <li><span class="ts-time">2:15:31</span><span class="ts-desc">Exa.ai: мощный агентский поиск для Claude</span></li>
+    <li><span class="ts-time">2:20:03</span><span class="ts-desc">Настройка скилла exa-research с API-ключом</span></li>
+    <li><span class="ts-time">2:27:47</span><span class="ts-desc">Создание alias: cc = cd /opt/workspace && claude</span></li>
+    <li><span class="ts-time">2:33:32</span><span class="ts-desc">Exa нашёл: вчера вышли Claude Code Channels!</span></li>
+  </ul>
+
+  <h3>Блок 5: Память + MCP</h3>
+  <ul class="timestamp-list">
+    <li><span class="ts-time">2:44:49</span><span class="ts-desc">Настройка памяти: Memory + claude-mem MCP</span></li>
+    <li><span class="ts-time">2:49:48</span><span class="ts-desc">Зачем нужна память, как работает автоматическое запоминание</span></li>
+    <li><span class="ts-time">2:50:28</span><span class="ts-desc">Демо: Claude вспоминает решения двухнедельной давности</span></li>
+    <li><span class="ts-time">2:52:59</span><span class="ts-desc">GitHub: создание Personal Access Token</span></li>
+    <li><span class="ts-time">2:55:06</span><span class="ts-desc">Демо: 138 сессий-чекпоинтов, можно вернуться в любую</span></li>
+    <li><span class="ts-time">3:02:05</span><span class="ts-desc">Почему не Cursor: привязка к инфраструктуре, чёрная дыра токенов</span></li>
+    <li><span class="ts-time">3:06:20</span><span class="ts-desc">MCP серверы: GitHub, exa, memory</span></li>
+  </ul>
+
+  <h3>Obsidian + Git</h3>
+  <ul class="timestamp-list">
+    <li><span class="ts-time">3:07:02</span><span class="ts-desc">Obsidian vault на сервере: синхронизация через Git</span></li>
+    <li><span class="ts-time">3:08:24</span><span class="ts-desc">Настройка плагина Obsidian Git</span></li>
+    <li><span class="ts-time">3:12:23</span><span class="ts-desc">Настройки: auto-commit, 10 мин интервал, pull on startup</span></li>
+    <li><span class="ts-time">3:16:32</span><span class="ts-desc">Obsidian vault как набор файлов для Claude на сервере</span></li>
+  </ul>
+
+  <h3>Блок 6: Хуки + Statusline</h3>
+  <ul class="timestamp-list">
+    <li><span class="ts-time">3:20:22</span><span class="ts-desc">Statusline — информационная строка</span></li>
+    <li><span class="ts-time">3:27:25</span><span class="ts-desc">Хуки: session-start, session-end, notifications</span></li>
+    <li><span class="ts-time">3:28:24</span><span class="ts-desc">Демо statusline: модель, контекст, время, расход</span></li>
+    <li><span class="ts-time">3:32:49</span><span class="ts-desc">Зачем хуки не-программистам</span></li>
+  </ul>
+
+  <h3>Блок 8: Бонусы</h3>
+  <ul class="timestamp-list">
+    <li><span class="ts-time">3:53:42</span><span class="ts-desc">Работа со скриншотами: uploads, SFTP drag&drop</span></li>
+    <li><span class="ts-time">3:56:14</span><span class="ts-desc">Telegram-бот для обмена файлами с сервером</span></li>
+    <li><span class="ts-time">4:00:34</span><span class="ts-desc">Obsidian: 2000 документов, граф связей, векторная БД</span></li>
+    <li><span class="ts-time">4:05:00</span><span class="ts-desc">Создание Telegram-бота через BotFather</span></li>
+    <li><span class="ts-time">4:12:29</span><span class="ts-desc">Бот работает: отправка файлов на сервер и обратно</span></li>
+  </ul>
+
+  <h3>Финал</h3>
+  <ul class="timestamp-list">
+    <li><span class="ts-time">4:44:49</span><span class="ts-desc">Переход к VPN и финалу</span></li>
+    <li><span class="ts-time">4:48:17</span><span class="ts-desc">Философия: цель — не бояться терминала</span></li>
+    <li><span class="ts-time">4:49:28</span><span class="ts-desc">Бэкапы: 4vps + GitHub как бэкап</span></li>
+    <li><span class="ts-time">4:51:06</span><span class="ts-desc">Демо: session-save — полный слепок</span></li>
+    <li><span class="ts-time">4:57:09</span><span class="ts-desc">Claude Code vs Codex: CTO vs инженер-кодер</span></li>
+    <li><span class="ts-time">5:01:04</span><span class="ts-desc">Claude Code vs OpenClaw: интерактив vs агентность 24/7</span></li>
+    <li><span class="ts-time">5:14:00</span><span class="ts-desc">Бот как точка автоматизации: уведомления, мониторинг</span></li>
+  </ul>
 
   <h2>Part 2 — Продолжение (1ч 30мин)</h2>
   <ul class="timestamp-list">
@@ -2016,13 +2109,38 @@ node -v</code></pre>
   <h2>Технические инсайты</h2>
 
   <div class="insight-card">
-    <div class="insight-time">Part 1</div>
+    <div class="insight-time">Part 1 · 2:49</div>
     <strong>Три слоя памяти Claude Code</strong> — CLAUDE.md (автозагрузка), Memory-файлы (по инструкции), MCP memory (persistent store). Каждая сессия начинается с полным контекстом.
   </div>
 
   <div class="insight-card">
-    <div class="insight-time">Part 1</div>
+    <div class="insight-time">Part 1 · 1:30</div>
     <strong>Скилл = папка, не файл</strong> — <code>/root/.claude/skills/hello/SKILL.md</code>, а не <code>hello.md</code>. Частая ошибка при создании скиллов.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 1 · 1:34</div>
+    <strong>Перенос контекста</strong> — попросите существующего Claude «дай контекст про меня» и перенесите в серверный Claude. Мгновенная настройка.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 1 · 1:39</div>
+    <strong>VPN не нужен для Claude на сервере</strong> — сервер в Америке, Claude ходит в Anthropic из Америки. VPN нужен только вашему ноутбуку.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 1 · 2:43</div>
+    <strong>Codex: «выполняй незамедлительно»</strong> — без этого Codex любит принять задачу и ничего не делать. Добавляйте «выполняй и отчитайся».
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 1 · 3:02</div>
+    <strong>Почему не Cursor</strong> — «жрёт токены в чёрную дыру и привязывает к своей инфраструктуре». CLI = полный контроль.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 1 · 4:57</div>
+    <strong>Claude Code = CTO, Codex = инженер</strong> — Claude для глубокого анализа и архитектуры, Codex для быстрого кода. Идеальная пара.
   </div>
 
   <div class="insight-card">
