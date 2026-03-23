@@ -2224,29 +2224,40 @@ node -v</code></pre>
 
 <!-- SECURITY -->
 <section class="tab-pane" id="security">
-  <div class="step-header"><span class="step-number">S</span><span class="step-title">Безопасность сервера</span></div>
+  <div class="block-header">
+    <h1>Безопасность сервера</h1>
+    <span class="block-duration">~10 мин</span>
+  </div>
 
   <div class="callout warning">
     <div class="callout-title">420 атак сегодня — и это нормально</div>
     <p>Как только ваш VPS появляется в интернете, боты начинают стучаться в SSH. Это автоматические сканеры — они перебирают <strong>все IP подряд</strong>, не лично ваш. На нашем рабочем сервере за всё время: <strong>18 178 неудачных попыток входа, 4 088 забаненных IP</strong>. Сегодня — 420 попыток только за один день.</p>
-    <p>Это не значит что вас "взламывают" — это фон интернета. Но без защиты рано или поздно подберут пароль.</p>
+    <p>Это не значит что вас «взламывают» — это фон интернета. Но без защиты рано или поздно подберут пароль.</p>
   </div>
 
   <p>Проверьте сами — подключитесь к серверу и выполните:</p>
-  <pre><code class="language-bash"># Посмотреть последние неудачные попытки входа
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Посмотреть последние неудачные попытки входа
 lastb | head -20
 
 # Если команда пустая — значит логи ещё не накопились (свежий сервер)</code></pre>
+  </div>
 
   <h2>Шаг 1. Обновления (2 минуты)</h2>
   <p>Самое важное и самое простое. Обновления закрывают известные уязвимости, а автообновления делают это без вашего участия.</p>
-  <pre><code class="language-bash"># Обновить всё что есть
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Обновить всё что есть
 apt update && apt upgrade -y
 
 # Поставить автоматические обновления безопасности
 apt install unattended-upgrades -y
 dpkg-reconfigure -plow unattended-upgrades
 # → ответить Yes</code></pre>
+  </div>
 
   <div class="callout success">
     <div class="callout-title">Что это даёт</div>
@@ -2255,21 +2266,27 @@ dpkg-reconfigure -plow unattended-upgrades
 
   <h2>Шаг 2. fail2ban — автобан ботов (3 минуты)</h2>
   <p>fail2ban следит за логами SSH. Если кто-то 5 раз ввёл неправильный пароль — его IP банится на 10 минут. Боты уходят, живые люди не страдают.</p>
-  <pre><code class="language-bash"># Установка и запуск
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Установка и запуск
 apt install fail2ban -y
 systemctl enable --now fail2ban
 
 # Проверить что работает
 fail2ban-client status sshd</code></pre>
+  </div>
 
   <p>Вы увидите что-то вроде:</p>
-  <pre><code>Status for the jail: sshd
+  <div class="code-wrapper">
+    <pre><code>Status for the jail: sshd
 |- Filter
 |  |- Currently failed: 1
 |  |- Total failed:     83
 `- Actions
    |- Currently banned: 2
    |- Total banned:     14</code></pre>
+  </div>
 
   <div class="callout success">
     <div class="callout-title">Это уже 80% защиты</div>
@@ -2279,12 +2296,15 @@ fail2ban-client status sshd</code></pre>
   <h2>Шаг 3. UFW — файрвол для людей (3 минуты)</h2>
   <p>UFW (Uncomplicated Firewall) — простая обёртка над iptables. Закрывает все порты, кроме тех что вы явно разрешили.</p>
 
-  <div class="callout warning">
+  <div class="callout danger">
     <div class="callout-title">Важный порядок команд!</div>
     <p><strong>ВСЕГДА сначала <code>ufw allow 22</code>, потом <code>ufw enable</code>.</strong> Если включить файрвол до разрешения SSH — вы отрежете себе доступ к серверу.</p>
   </div>
 
-  <pre><code class="language-bash"># 1. Разрешить SSH (ПЕРВАЯ КОМАНДА!)
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># 1. Разрешить SSH (ПЕРВАЯ КОМАНДА!)
 ufw allow 22/tcp
 
 # 2. Разрешить HTTPS (если нужен веб-сервер)
@@ -2299,15 +2319,18 @@ ufw enable
 
 # 5. Проверить
 ufw status</code></pre>
+  </div>
 
   <p>Результат:</p>
-  <pre><code>Status: active
+  <div class="code-wrapper">
+    <pre><code>Status: active
 
 To                         Action      From
 --                         ------      ----
 22/tcp                     ALLOW       Anywhere
 443/tcp                    ALLOW       Anywhere
 1194/udp                   ALLOW       Anywhere</code></pre>
+  </div>
 
   <div class="callout info">
     <div class="callout-title">Что если нужен ещё порт?</div>
@@ -2316,7 +2339,10 @@ To                         Action      From
 
   <h2>Чеклист «5 минут после развёртывания»</h2>
   <p>Скопируйте и выполните целиком — это безопасный блок команд:</p>
-  <pre><code class="language-bash"># === Безопасность за 5 минут ===
+  <div class="code-wrapper">
+    <span class="code-lang">bash — копипаста целиком</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># === Безопасность за 5 минут ===
 
 # Обновления
 apt update && apt upgrade -y
@@ -2335,6 +2361,7 @@ echo "=== firewall ==="
 ufw status
 echo "=== auto-updates ==="
 systemctl is-active unattended-upgrades</code></pre>
+  </div>
 
   <h2>Что НЕ надо делать (пока)</h2>
   <div class="callout warning">
@@ -2357,12 +2384,15 @@ systemctl is-active unattended-upgrades</code></pre>
 
 <!-- REBOOT & CRON -->
 <section class="tab-pane" id="reboot-cron">
-  <div class="step-header"><span class="step-number">R</span><span class="step-title">Ребут, tmux и Cron</span></div>
+  <div class="block-header">
+    <h1>Ребут, tmux и Cron</h1>
+    <span class="block-duration">~8 мин</span>
+  </div>
 
   <h2>VPS перезагрузился — что случилось?</h2>
   <p>Ваш VPS-провайдер может перезагрузить сервер для обслуживания, или вы сами сделаете <code>reboot</code>. Что при этом происходит:</p>
 
-  <table>
+  <table class="comparison-table">
     <thead><tr><th>Что</th><th>После ребута</th><th>Нужно ли что-то делать?</th></tr></thead>
     <tbody>
       <tr><td><strong>tmux-сессии</strong></td><td>Умирают</td><td>Запустить заново: <code>tmux new -s work</code></td></tr>
@@ -2374,7 +2404,10 @@ systemctl is-active unattended-upgrades</code></pre>
   </table>
 
   <h2>Чеклист «после ребута»</h2>
-  <pre><code class="language-bash"># 1. Проверить что все сервисы живы
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># 1. Проверить что все сервисы живы
 systemctl --failed
 
 # 2. Если пусто — всё ок. Если что-то красное:
@@ -2386,6 +2419,7 @@ tmux ls
 
 # 4. Запустить рабочую сессию
 tmux new -s work</code></pre>
+  </div>
 
   <div class="callout info">
     <div class="callout-title">tmux vs systemd — когда что</div>
@@ -2403,18 +2437,23 @@ tmux new -s work</code></pre>
   <p><strong>Cron</strong> — это будильник для сервера. Вы говорите: «каждый день в 3 ночи сделай бэкап» — он делает. Без вашего участия, даже когда вы спите.</p>
 
   <h3>Формат расписания</h3>
-  <pre><code>┌───── минута (0-59)
+  <div class="code-wrapper">
+    <pre><code>┌───── минута (0-59)
 │ ┌──── час (0-23)
 │ │ ┌─── день месяца (1-31)
 │ │ │ ┌── месяц (1-12)
 │ │ │ │ ┌─ день недели (0-7, вс=0 или 7)
 │ │ │ │ │
 * * * * *  команда</code></pre>
+  </div>
 
   <p><code>*</code> означает «каждый». То есть <code>* * * * *</code> — каждую минуту. <code>0 3 * * *</code> — каждый день в 3:00.</p>
 
   <h3>Примеры (от простого к сложному)</h3>
-  <pre><code class="language-bash"># Каждую минуту — тест что cron работает
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Каждую минуту — тест что cron работает
 * * * * * echo "$(date): alive" >> /tmp/cron-test.log
 
 # Каждый день в 3:00 — обновления
@@ -2428,9 +2467,13 @@ tmux new -s work</code></pre>
 
 # Каждое воскресенье в 5:00 — очистка старых бэкапов (оставить последние 5)
 0 5 * * 0 ls -t /root/backup-*.tar.gz | tail -n +6 | xargs -r rm</code></pre>
+  </div>
 
   <h3>Как управлять</h3>
-  <pre><code class="language-bash"># Открыть редактор cron-задач
+  <div class="code-wrapper">
+    <span class="code-lang">bash</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Открыть редактор cron-задач
 crontab -e
 # (при первом запуске выберите nano — он проще)
 
@@ -2439,6 +2482,7 @@ crontab -l
 
 # Проверить что cron выполнял
 grep CRON /var/log/syslog | tail -10</code></pre>
+  </div>
 
   <div class="callout warning">
     <div class="callout-title">Частые ошибки</div>
@@ -2451,7 +2495,10 @@ grep CRON /var/log/syslog | tail -10</code></pre>
 
   <h3>Как это выглядит на реальном сервере</h3>
   <p>Наш рабочий сервер выполняет по расписанию:</p>
-  <pre><code class="language-bash"># Каждый день в 4:00 — очистка кешей (npm, uv, claude debug)
+  <div class="code-wrapper">
+    <span class="code-lang">bash — production crontab</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Каждый день в 4:00 — очистка кешей (npm, uv, claude debug)
 0 4 * * * rm -rf /root/.cache/uv/* /root/.npm/_npx /root/.local/share/pnpm/store/v3/tmp
 
 # Три раза в день — публикация дайджеста новостей
@@ -2462,6 +2509,7 @@ grep CRON /var/log/syslog | tail -10</code></pre>
 
 # По воскресеньям в 4:30 — ротация бэкапов (оставить 5 последних)
 30 4 * * 0 ls -t /root/.claude-mem/backups/*.db* | tail -n +6 | xargs -r rm</code></pre>
+  </div>
 
   <div class="callout success">
     <div class="callout-title">Попробуйте сами</div>
@@ -2469,7 +2517,10 @@ grep CRON /var/log/syslog | tail -10</code></pre>
   </div>
 
   <h2>Полезные автоматизации для AI-сервера</h2>
-  <pre><code class="language-bash"># Мониторинг диска — предупреждение при заполнении >80%
+  <div class="code-wrapper">
+    <span class="code-lang">bash — готовые рецепты</span>
+    <button class="copy-btn">Копировать</button>
+    <pre><code class="language-bash"># Мониторинг диска — предупреждение при заполнении >80%
 0 */6 * * * df / | awk 'NR==2 && $5+0 > 80 {print "DISK WARNING: "$5" used"}' >> /var/log/disk-alert.log
 
 # Git-бэкап vault каждый вечер в 22:00
@@ -2477,6 +2528,7 @@ grep CRON /var/log/syslog | tail -10</code></pre>
 
 # Перезапуск бота если упал (каждые 10 минут)
 */10 * * * * systemctl is-active --quiet mybot || systemctl restart mybot</code></pre>
+  </div>
 </section>
 
 </main>
