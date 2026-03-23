@@ -18,14 +18,25 @@
 <!-- HEADER -->
 <header class="site-header">
   <div class="header-content">
-    <h1 class="site-title">InfraLearn <span>— Свой AI-сервер</span></h1>
-    <p class="site-subtitle">Claude Code + Codex на вашем сервере</p>
-    <p class="site-date">21 марта 2026</p>
+    <p class="header-label">AI Mindset Workshop</p>
+    <h1 class="site-title">СВОЯ <span class="accent">AI-ИНФРА</span>СТРУКТУРА</h1>
+    <p class="site-subtitle">Вместе, шаг за шагом</p>
+    <div class="header-meta">
+      <span class="meta-item">Claude Code</span>
+      <span class="meta-sep">/</span>
+      <span class="meta-item">Codex CLI</span>
+      <span class="meta-sep">/</span>
+      <span class="meta-item">MCP</span>
+      <span class="meta-sep">/</span>
+      <span class="meta-item">VPN</span>
+    </div>
+    <p class="site-date">21 марта 2026 — Александр Васильев</p>
   </div>
 </header>
 
 <!-- TAB NAV -->
 <nav class="tab-nav-wrapper">
+  <button class="tab-arrow tab-arrow-left" aria-label="Прокрутить влево">&#8249;</button>
   <div class="tab-nav">
     <button class="tab-btn active" data-tab="block-0"><span class="tab-num">0</span>Введение</button>
     <button class="tab-btn" data-tab="block-1"><span class="tab-num">1</span>VPS</button>
@@ -39,7 +50,11 @@
     <button class="tab-btn" data-tab="block-9"><span class="tab-num">9</span>Финал</button>
     <button class="tab-btn" data-tab="cheatsheet"><span class="tab-num">CS</span>Шпаргалка</button>
     <button class="tab-btn" data-tab="troubleshooting"><span class="tab-num">?</span>Проблемы</button>
+    <button class="tab-btn" data-tab="workshop-summary"><span class="tab-num">W</span>Воркшоп</button>
+    <button class="tab-btn" data-tab="workshop-timestamps"><span class="tab-num">T</span>Таймкоды</button>
+    <button class="tab-btn" data-tab="workshop-insights"><span class="tab-num">I</span>Инсайты</button>
   </div>
+  <button class="tab-arrow tab-arrow-right" aria-label="Прокрутить вправо">&#8250;</button>
 </nav>
 
 <!-- CONTENT -->
@@ -1838,6 +1853,245 @@ node -v</code></pre>
       </div>
       <p>Все процессы внутри tmux продолжают работать после отключения.</p>
     </div>
+  </div>
+</section>
+
+<!-- WORKSHOP SUMMARY -->
+<section class="tab-pane" id="workshop-summary">
+  <div class="block-header">
+    <h1>Воркшоп — Summary</h1>
+    <span class="block-duration">21 марта 2026</span>
+  </div>
+
+  <div class="workshop-hero">
+    <h2>Своя AI-Инфраструктура</h2>
+    <p>Практический мастер-класс, где участники с нуля подняли VPS-сервер и настроили полный стек AI-инструментов.</p>
+    <div class="workshop-stats">
+      <div class="workshop-stat"><span class="stat-val">6.5ч</span><span class="stat-label">длительность</span></div>
+      <div class="workshop-stat"><span class="stat-val">30+</span><span class="stat-label">участников</span></div>
+      <div class="workshop-stat"><span class="stat-val">10</span><span class="stat-label">блоков</span></div>
+      <div class="workshop-stat"><span class="stat-val">2</span><span class="stat-label">части</span></div>
+    </div>
+  </div>
+
+  <h2>Что мы сделали</h2>
+  <p>Главная идея — <strong>независимость</strong>: свой сервер работает 24/7, не зависит от VPN на ноутбуке, хранит весь контекст и память между сессиями, защищён от банов по геолокации.</p>
+  <ul>
+    <li><strong>Блок 0-1:</strong> Введение, покупка VPS (4VPS.su, Ubuntu 24.04, USA)</li>
+    <li><strong>Блок 2:</strong> Termius, SSH-подключение, обновление системы</li>
+    <li><strong>Блок 3:</strong> Установка Claude Code v2.1.81 + авторизация через Claude Max</li>
+    <li><strong>Блок 4:</strong> CLAUDE.md — системный промпт, правила, память</li>
+    <li><strong>Блок 5:</strong> MCP-серверы (memory, filesystem, exa), три слоя памяти</li>
+    <li><strong>Блок 6:</strong> Хуки и statusline</li>
+    <li><strong>Блок 7:</strong> Codex CLI (OpenAI) + alias'ы</li>
+    <li><strong>Блок 8:</strong> Бонус: tmux, Obsidian + Git, Upload2Server бот, OpenVPN</li>
+    <li><strong>Блок 9:</strong> Чеклист, шпаргалка, troubleshooting</li>
+  </ul>
+
+  <h2>Результат</h2>
+  <p>К концу воркшопа участники имели:</p>
+  <ul>
+    <li>Работающий VPS-сервер в США</li>
+    <li>Claude Code + Codex CLI с авторизацией</li>
+    <li>Систему памяти (CLAUDE.md + memory files + MCP)</li>
+    <li>MCP-серверы (memory, filesystem, exa)</li>
+    <li>Хуки и statusline</li>
+    <li>Obsidian vault с Git-синхронизацией</li>
+    <li>Upload-бота для обмена файлами</li>
+    <li>Свой VPN (у продвинутых участников)</li>
+  </ul>
+  <p><strong>Полная AI-инфраструктура за один день.</strong></p>
+
+  <h2>Аудитория</h2>
+  <p>Разнообразная аудитория — от тех, кто впервые зашёл в терминал, до опытных IT-специалистов:</p>
+  <ul>
+    <li>Motion-дизайн студия (Opus + GPT-5), логистические роботы, проектирование АЭС</li>
+    <li>IT-специалисты, системные аналитики, Perplexity + Cursor</li>
+    <li>Начинающие — первый опыт с серверами и терминалом</li>
+  </ul>
+  <p>Общая боль — блокировки сервисов в РФ и желание независимой AI-инфраструктуры.</p>
+
+  <h2>Отзывы</h2>
+  <div class="review-card">
+    <blockquote>«Самое крутое — что пачка артефактов на руках! И за день успели столько, сколько я бы пару недель ковырялся. Каждый пункт списка был ценный!»</blockquote>
+    <div class="review-author">— Александр Коряковский</div>
+  </div>
+  <div class="review-card">
+    <blockquote>«Очень крутой воркшоп! Я почти не устала, потому что было очень интересно и полезно.»</blockquote>
+    <div class="review-author">— Елена Борисенко</div>
+  </div>
+  <div class="review-card">
+    <blockquote>«Переворот сознания в работе с ИИ.»</blockquote>
+    <div class="review-author">— k_i</div>
+  </div>
+  <div class="review-card">
+    <blockquote>«Всё получилось, я прям в предвкушении разработок предстоящих! 5*, обучение достойное, ведущий супер!»</blockquote>
+    <div class="review-author">— Aleksandr Moskvichev</div>
+  </div>
+  <div class="review-card">
+    <blockquote>«Я уже поставила и Клода, и Кодекса! Поставила прокси на телегу и VPN на роутер!»</blockquote>
+    <div class="review-author">— Ирина Мартынова</div>
+  </div>
+  <div class="review-card">
+    <blockquote>«Вы великолепны! Замечательный и очень полезный мастер-класс. Ваши профессионализм, замотивированность и доброжелательность очень вдохновляют!»</blockquote>
+    <div class="review-author">— София</div>
+  </div>
+
+  <h2>Полезные ссылки</h2>
+  <div class="links-grid">
+    <div class="link-card"><a href="https://4vps.su/r/M88oXU43y9K9">4VPS.su</a><p>VPS-хостинг (оплата картой РФ)</p></div>
+    <div class="link-card"><a href="https://termius.com/">Termius</a><p>SSH-клиент для подключения</p></div>
+    <div class="link-card"><a href="https://exa.ai">Exa.ai</a><p>AI-поисковик, MCP-интеграция</p></div>
+    <div class="link-card"><a href="https://obsidian.md/">Obsidian</a><p>База знаний</p></div>
+    <div class="link-card"><a href="https://pyyplbot.com/?refid=219787633">PYYPL</a><p>Виртуальная карта (США)</p></div>
+    <div class="link-card"><a href="https://smsfast.pro/?ref=292105">SMSFast</a><p>Приём SMS при регистрации</p></div>
+    <div class="link-card"><a href="https://github.com/slopus/murmur">Murmur</a><p>Межагентная коммуникация</p></div>
+    <div class="link-card"><a href="https://t.me/ai_mind_set">AI Mindset</a><p>Telegram-канал</p></div>
+  </div>
+</section>
+
+<!-- WORKSHOP TIMESTAMPS -->
+<section class="tab-pane" id="workshop-timestamps">
+  <div class="block-header">
+    <h1>Таймкоды — Что смотреть</h1>
+    <span class="block-duration">YouTube Chapters</span>
+  </div>
+
+  <h2>Part 1 — Основной воркшоп (5ч 15мин)</h2>
+  <p>Загружаю таймкоды...</p>
+  <ul class="timestamp-list" id="timestamps-part1">
+    <li><span class="ts-time">00:00</span><span class="ts-desc">Введение: AI Mindset, Александр Повалыев представляет воркшоп</span></li>
+    <li><span class="ts-time">03:21</span><span class="ts-desc">Александр Васильев: кто я, зачем этот воркшоп</span></li>
+    <li><span class="ts-time">04:57</span><span class="ts-desc">Баны Claude Max за локацию РФ — сервер решает проблему</span></li>
+    <li><span class="ts-time">05:26</span><span class="ts-desc">Обзор программы: 10 блоков + бонусы</span></li>
+    <li><span class="ts-time">06:43</span><span class="ts-desc">Знакомство участников, ожидания, боли</span></li>
+    <li><span class="ts-time">09:04</span><span class="ts-desc">Antigravity, Google блокировки, обходы</span></li>
+  </ul>
+  <div class="callout info">
+    <div class="callout-title">Обновление</div>
+    <p>Полные таймкоды Part 1 будут добавлены после обработки 5-часового транскрипта.</p>
+  </div>
+
+  <h2>Part 2 — Продолжение (1ч 30мин)</h2>
+  <ul class="timestamp-list">
+    <li><span class="ts-time">00:00</span><span class="ts-desc">Начало Part 2: разница между Upload-ботом и OpenClaw</span></li>
+    <li><span class="ts-time">02:10</span><span class="ts-desc">Почему пропускаем OpenClaw — можно настроить самим позже</span></li>
+    <li><span class="ts-time">02:38</span><span class="ts-desc">Демо OpenClaw Александра: ~90 скиллов, семейный чат, ресерч</span></li>
+    <li><span class="ts-time">04:56</span><span class="ts-desc">Как увидеть загруженные файлы через SFTP в Termius</span></li>
+    <li><span class="ts-time">07:08</span><span class="ts-desc">Получение файлов от Claude через бота (демо tg_send)</span></li>
+    <li><span class="ts-time">11:25</span><span class="ts-desc">Настройка VPN: OpenVPN на сервере через Claude</span></li>
+    <li><span class="ts-time">17:48</span><span class="ts-desc">tmux: зачем нужен, страховка от обрыва связи</span></li>
+    <li><span class="ts-time">19:30</span><span class="ts-desc">Практика: участники настраивают VPN, вопросы по OpenVPN Connect</span></li>
+    <li><span class="ts-time">24:33</span><span class="ts-desc">Свой VPN vs покупной: преимущества своего сервера</span></li>
+    <li><span class="ts-time">25:49</span><span class="ts-desc">Что делать при блокировке IP: покупка доп. IP, Claude перенастроит</span></li>
+    <li><span class="ts-time">29:50</span><span class="ts-desc">Лайфхак: отключение IPv6 для обхода блокировок Google/Gemini</span></li>
+    <li><span class="ts-time">32:12</span><span class="ts-desc">Tailscale: приватная сеть между всеми устройствами</span></li>
+    <li><span class="ts-time">36:02</span><span class="ts-desc">Use case: Claude подключается к компу через Tailscale</span></li>
+    <li><span class="ts-time">38:08</span><span class="ts-desc">Работа с Claude с телефона через tmux</span></li>
+    <li><span class="ts-time">45:06</span><span class="ts-desc">Tailscale: демо установки и настройки</span></li>
+    <li><span class="ts-time">47:17</span><span class="ts-desc">Wake-on-LAN: удалённое включение компьютера через Claude</span></li>
+    <li><span class="ts-time">53:00</span><span class="ts-desc">Завершение основной части, благодарности</span></li>
+    <li><span class="ts-time">55:10</span><span class="ts-desc">Как сделать Claude «умным»: скиллы, память, Decision Graph</span></li>
+    <li><span class="ts-time">57:56</span><span class="ts-desc">Max vs Pro подписка: разница в лимитах</span></li>
+    <li><span class="ts-time">59:03</span><span class="ts-desc">Ultrathink: режим максимального мышления</span></li>
+    <li><span class="ts-time">1:02:55</span><span class="ts-desc">Итоги воркшопа: что сделали за день</span></li>
+    <li><span class="ts-time">1:04:20</span><span class="ts-desc">Демо: свой домен + поддомены для сервисов</span></li>
+    <li><span class="ts-time">1:06:51</span><span class="ts-desc">Сохранение и продолжение сессий в Claude Code</span></li>
+    <li><span class="ts-time">1:09:58</span><span class="ts-desc">Murmur: мультиагентная система между Claude, Codex и другими</span></li>
+    <li><span class="ts-time">1:15:44</span><span class="ts-desc">Workflow: Claude = техдир, Codex пишет код, Haiku проверяет</span></li>
+    <li><span class="ts-time">1:20:06</span><span class="ts-desc">RAG и работа с большим количеством файлов</span></li>
+    <li><span class="ts-time">1:21:04</span><span class="ts-desc">Кейс: HPE Configurator — 8000 PDF → RAG → AI-помощник за 3 дня</span></li>
+    <li><span class="ts-time">1:26:22</span><span class="ts-desc">Золотое правило: Exa Search перед каждой задачей</span></li>
+    <li><span class="ts-time">1:28:17</span><span class="ts-desc">Прощание</span></li>
+  </ul>
+</section>
+
+<!-- WORKSHOP INSIGHTS -->
+<section class="tab-pane" id="workshop-insights">
+  <div class="block-header">
+    <h1>Инсайты и кейсы</h1>
+    <span class="block-duration">Самое интересное</span>
+  </div>
+
+  <h2>Технические инсайты</h2>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 1</div>
+    <strong>Три слоя памяти Claude Code</strong> — CLAUDE.md (автозагрузка), Memory-файлы (по инструкции), MCP memory (persistent store). Каждая сессия начинается с полным контекстом.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 1</div>
+    <strong>Скилл = папка, не файл</strong> — <code>/root/.claude/skills/hello/SKILL.md</code>, а не <code>hello.md</code>. Частая ошибка при создании скиллов.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 2 · 29:50</div>
+    <strong>IPv6 выдаёт геолокацию</strong> — Google/Gemini блокирует через IPv6, даже если VPN настроен. Решение: отключить IPv6 в свойствах сетевого адаптера.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 2 · 25:49</div>
+    <strong>Блокировка IP? Claude починит</strong> — если РКН заблокирует IP вашего сервера, покупаете второй IP у хостера, Claude сам перенастроит всё за минуты.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 2 · 59:03</div>
+    <strong>Ultrathink</strong> — недокументированная команда Claude Code для extended thinking. Жрёт токены, но для сложных задач незаменима.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 2 · 1:26:22</div>
+    <strong>Золотое правило</strong> — всегда делайте Exa Search перед началом задачи. AI не знает всего, но может собрать актуальную информацию из интернета.
+  </div>
+
+  <h2>Кейсы участников</h2>
+
+  <div class="insight-card">
+    <div class="insight-time">Евгений Парфёнов</div>
+    Попросил Claude поднять <strong>MTProxy для Telegram</strong> прямо на VPS. Поднял, проверил — работает. Бонус для тех, кто в РФ.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Dmitry Rudenko</div>
+    Не стал ставить Upload2Server, настроил <strong>нативную интеграцию с Telegram через channels</strong>. Попросил Claude настроить speech-to-text — и тот сам всё сделал.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Ирина Мартынова</div>
+    За один воркшоп поставила <strong>Claude Code, Codex, VPN на роутер И MTProxy для Telegram</strong>. Полная AI-инфраструктура за 5 часов.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 2 · 1:21:04</div>
+    <strong>Кейс HPE Configurator</strong> — обработка 8000 PDF-документов, декомпиляция C#-приложения, RAG-система, SQLite-база, AI-помощник на GPT-4o. Создано за 3 дня с помощью Claude Code.
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-time">Part 2 · 1:09:58</div>
+    <strong>Murmur</strong> — мультиагентная система на 3 серверах (2 США, 1 Англия). Claude = техдир, Codex пишет код, Haiku проверяет. Шифрованная связь между агентами.
+  </div>
+
+  <h2>Вопросы, которые задавали чаще всего</h2>
+
+  <div class="callout info">
+    <div class="callout-title">Cursor vs CLI</div>
+    <p><strong>«Почему терминал, а не Cursor?»</strong> — CLI даёт больше контроля, работает по SSH из любого места, память персистентна, можно автоматизировать через хуки и скиллы. Claude Code в терминале «гораздо мощнее, чем в приложении — можно затюнить в бешеную собаку на стероидах».</p>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">Claude vs Codex</div>
+    <p><strong>«Зачем оба?»</strong> — Claude (Anthropic) для архитектуры и сложных задач, Codex (OpenAI) для кодинга. Разные модели, разные сильные стороны. Через Murmur можно заставить их работать вместе.</p>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">Max vs Pro</div>
+    <p><strong>«В чём разница?»</strong> — только в лимитах. На Pro недельный лимит достигался 2 раза. Max = безлимит для серьёзной работы.</p>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">VPN на сервере</div>
+    <p><strong>«Если выключить VPN на компе, Claude продолжит работать?»</strong> — Да! Сервер работает 24/7. VPN нужен только вашему ноутбуку. Claude на сервере не зависит от вашего VPN.</p>
   </div>
 </section>
 

@@ -2,6 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initTabs();
+  initTabArrows();
   initCopyButtons();
   initHighlighting();
 });
@@ -50,6 +51,35 @@ function activateTab(tabId, buttons, panes, doScroll) {
       hljs.highlightElement(block);
     });
   }
+}
+
+/* Tab Arrow Scrolling */
+function initTabArrows() {
+  const nav = document.querySelector('.tab-nav');
+  const leftArrow = document.querySelector('.tab-arrow-left');
+  const rightArrow = document.querySelector('.tab-arrow-right');
+  if (!nav || !leftArrow || !rightArrow) return;
+
+  const scrollAmount = 200;
+
+  function updateArrows() {
+    const atStart = nav.scrollLeft <= 2;
+    const atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 2;
+    leftArrow.classList.toggle('hidden', atStart);
+    rightArrow.classList.toggle('hidden', atEnd);
+  }
+
+  leftArrow.addEventListener('click', () => {
+    nav.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  });
+
+  rightArrow.addEventListener('click', () => {
+    nav.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  });
+
+  nav.addEventListener('scroll', updateArrows, { passive: true });
+  window.addEventListener('resize', updateArrows);
+  updateArrows();
 }
 
 /* Copy Buttons */
