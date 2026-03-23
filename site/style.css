@@ -50,19 +50,31 @@ body {
   overflow: hidden;
   min-height: 220px;
 }
-/* Hero photo background — positioned left, fades to right */
+/* Hero photo — small card in top-left corner */
 .site-header::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; bottom: 0;
-  width: 45%;
-  background-image: url('hero-bg.jpg');
-  background-size: cover;
-  background-position: center center;
-  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.25) 80%, transparent 100%);
-  mask-image: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.25) 80%, transparent 100%);
+  top: 0; left: 0;
+  width: 0; height: 0;
   pointer-events: none;
 }
+.header-hero {
+  position: absolute;
+  top: 0.8rem;
+  left: 1rem;
+  width: 130px;
+  height: auto;
+  z-index: 2;
+}
+.header-hero img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.08);
+  opacity: 0.85;
+  transition: opacity 0.3s;
+}
+.header-hero img:hover { opacity: 1; }
 .site-header::after {
   content: '';
   position: absolute;
@@ -440,6 +452,7 @@ code {
   .header-label { font-size: 0.6rem; letter-spacing: 2px; }
   .header-contacts { top: 0.5rem; right: 0.8rem; gap: 0.3rem; }
   .header-contacts a { font-size: 0.6rem; }
+  .header-hero { width: 90px; top: 0.5rem; left: 0.5rem; }
   .tab-btn { padding: 0.7rem 0.8rem; font-size: 0.78rem; }
   .tab-arrow { width: 2rem; font-size: 1.2rem; }
   .main-content { padding: 1.5rem 1rem 3rem; }
