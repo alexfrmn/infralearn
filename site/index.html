@@ -60,6 +60,8 @@
     <button class="tab-btn" data-tab="workshop-summary"><span class="tab-num">W</span>Воркшоп</button>
     <button class="tab-btn" data-tab="workshop-timestamps"><span class="tab-num">T</span>Таймкоды</button>
     <button class="tab-btn" data-tab="workshop-insights"><span class="tab-num">I</span>Инсайты</button>
+    <button class="tab-btn" data-tab="security"><span class="tab-num">S</span>Безопасность</button>
+    <button class="tab-btn" data-tab="reboot-cron"><span class="tab-num">R</span>Ребут и Cron</button>
   </div>
   <button class="tab-arrow tab-arrow-right" aria-label="Прокрутить вправо">&#8250;</button>
 </nav>
@@ -2218,6 +2220,263 @@ node -v</code></pre>
     <div class="callout-title">VPN на сервере</div>
     <p><strong>«Если выключить VPN на компе, Claude продолжит работать?»</strong> — Да! Сервер работает 24/7. VPN нужен только вашему ноутбуку. Claude на сервере не зависит от вашего VPN.</p>
   </div>
+</section>
+
+<!-- SECURITY -->
+<section class="tab-pane" id="security">
+  <div class="step-header"><span class="step-number">S</span><span class="step-title">Безопасность сервера</span></div>
+
+  <div class="callout warning">
+    <div class="callout-title">420 атак сегодня — и это нормально</div>
+    <p>Как только ваш VPS появляется в интернете, боты начинают стучаться в SSH. Это автоматические сканеры — они перебирают <strong>все IP подряд</strong>, не лично ваш. На нашем рабочем сервере за всё время: <strong>18 178 неудачных попыток входа, 4 088 забаненных IP</strong>. Сегодня — 420 попыток только за один день.</p>
+    <p>Это не значит что вас "взламывают" — это фон интернета. Но без защиты рано или поздно подберут пароль.</p>
+  </div>
+
+  <p>Проверьте сами — подключитесь к серверу и выполните:</p>
+  <pre><code class="language-bash"># Посмотреть последние неудачные попытки входа
+lastb | head -20
+
+# Если команда пустая — значит логи ещё не накопились (свежий сервер)</code></pre>
+
+  <h2>Шаг 1. Обновления (2 минуты)</h2>
+  <p>Самое важное и самое простое. Обновления закрывают известные уязвимости, а автообновления делают это без вашего участия.</p>
+  <pre><code class="language-bash"># Обновить всё что есть
+apt update && apt upgrade -y
+
+# Поставить автоматические обновления безопасности
+apt install unattended-upgrades -y
+dpkg-reconfigure -plow unattended-upgrades
+# → ответить Yes</code></pre>
+
+  <div class="callout success">
+    <div class="callout-title">Что это даёт</div>
+    <p>Критические патчи безопасности будут устанавливаться автоматически. Вам не нужно следить за этим вручную.</p>
+  </div>
+
+  <h2>Шаг 2. fail2ban — автобан ботов (3 минуты)</h2>
+  <p>fail2ban следит за логами SSH. Если кто-то 5 раз ввёл неправильный пароль — его IP банится на 10 минут. Боты уходят, живые люди не страдают.</p>
+  <pre><code class="language-bash"># Установка и запуск
+apt install fail2ban -y
+systemctl enable --now fail2ban
+
+# Проверить что работает
+fail2ban-client status sshd</code></pre>
+
+  <p>Вы увидите что-то вроде:</p>
+  <pre><code>Status for the jail: sshd
+|- Filter
+|  |- Currently failed: 1
+|  |- Total failed:     83
+`- Actions
+   |- Currently banned: 2
+   |- Total banned:     14</code></pre>
+
+  <div class="callout success">
+    <div class="callout-title">Это уже 80% защиты</div>
+    <p>Серьёзно. Для учебного сервера fail2ban + обновления — это основной щит. Всё остальное — доп. усиление.</p>
+  </div>
+
+  <h2>Шаг 3. UFW — файрвол для людей (3 минуты)</h2>
+  <p>UFW (Uncomplicated Firewall) — простая обёртка над iptables. Закрывает все порты, кроме тех что вы явно разрешили.</p>
+
+  <div class="callout warning">
+    <div class="callout-title">Важный порядок команд!</div>
+    <p><strong>ВСЕГДА сначала <code>ufw allow 22</code>, потом <code>ufw enable</code>.</strong> Если включить файрвол до разрешения SSH — вы отрежете себе доступ к серверу.</p>
+  </div>
+
+  <pre><code class="language-bash"># 1. Разрешить SSH (ПЕРВАЯ КОМАНДА!)
+ufw allow 22/tcp
+
+# 2. Разрешить HTTPS (если нужен веб-сервер)
+ufw allow 443/tcp
+
+# 3. Разрешить OpenVPN (если настраивали)
+ufw allow 1194/udp
+
+# 4. Включить файрвол
+ufw enable
+# → ответить y
+
+# 5. Проверить
+ufw status</code></pre>
+
+  <p>Результат:</p>
+  <pre><code>Status: active
+
+To                         Action      From
+--                         ------      ----
+22/tcp                     ALLOW       Anywhere
+443/tcp                    ALLOW       Anywhere
+1194/udp                   ALLOW       Anywhere</code></pre>
+
+  <div class="callout info">
+    <div class="callout-title">Что если нужен ещё порт?</div>
+    <p><code>ufw allow 8080/tcp</code> — добавить порт. <code>ufw status numbered</code> — посмотреть с номерами. <code>ufw delete 3</code> — удалить правило №3.</p>
+  </div>
+
+  <h2>Чеклист «5 минут после развёртывания»</h2>
+  <p>Скопируйте и выполните целиком — это безопасный блок команд:</p>
+  <pre><code class="language-bash"># === Безопасность за 5 минут ===
+
+# Обновления
+apt update && apt upgrade -y
+apt install unattended-upgrades fail2ban ufw -y
+dpkg-reconfigure -plow unattended-upgrades
+
+# Файрвол (порядок важен!)
+ufw allow 22/tcp
+ufw allow 443/tcp
+ufw enable
+
+# Проверка
+echo "=== fail2ban ==="
+fail2ban-client status sshd
+echo "=== firewall ==="
+ufw status
+echo "=== auto-updates ==="
+systemctl is-active unattended-upgrades</code></pre>
+
+  <h2>Что НЕ надо делать (пока)</h2>
+  <div class="callout warning">
+    <div class="callout-title">Не ломай себе доступ</div>
+    <ul>
+      <li><strong>Менять SSH порт</strong> — не даёт реальной защиты, зато забудете новый порт и потеряете доступ</li>
+      <li><strong>Отключать вход по паролю</strong> — если потеряете SSH-ключ или переставите систему, на сервер не попадёте. fail2ban уже защищает от перебора</li>
+      <li><strong>Отключать root-логин</strong> — пока у вас один пользователь (root), это = заблокировать себя</li>
+      <li><strong>Ставить CrowdSec, knock-knock, 2FA на SSH</strong> — оверинжиниринг для учебного сервера</li>
+    </ul>
+  </div>
+
+  <p>Когда освоитесь — изучите <strong>SSH-ключи</strong> и отключение входа по паролю. Это следующий уровень. В Termius ключи хранятся в его Vault и подставляются автоматически — удобно, но требует понимания процесса.</p>
+
+  <div class="callout info">
+    <div class="callout-title">Принцип</div>
+    <p><strong>Каждый открытый порт должен иметь владельца и причину. Если не знаешь зачем он открыт — закрой.</strong></p>
+  </div>
+</section>
+
+<!-- REBOOT & CRON -->
+<section class="tab-pane" id="reboot-cron">
+  <div class="step-header"><span class="step-number">R</span><span class="step-title">Ребут, tmux и Cron</span></div>
+
+  <h2>VPS перезагрузился — что случилось?</h2>
+  <p>Ваш VPS-провайдер может перезагрузить сервер для обслуживания, или вы сами сделаете <code>reboot</code>. Что при этом происходит:</p>
+
+  <table>
+    <thead><tr><th>Что</th><th>После ребута</th><th>Нужно ли что-то делать?</th></tr></thead>
+    <tbody>
+      <tr><td><strong>tmux-сессии</strong></td><td>Умирают</td><td>Запустить заново: <code>tmux new -s work</code></td></tr>
+      <tr><td><strong>systemd-сервисы</strong></td><td>Запускаются сами</td><td>Нет — если включены через <code>enable</code></td></tr>
+      <tr><td><strong>cron-задачи</strong></td><td>Работают</td><td>Нет — cron запускается автоматически</td></tr>
+      <tr><td><strong>UFW файрвол</strong></td><td>Работает</td><td>Нет — правила сохраняются</td></tr>
+      <tr><td><strong>fail2ban</strong></td><td>Запускается сам</td><td>Нет — баны обнуляются (это нормально)</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Чеклист «после ребута»</h2>
+  <pre><code class="language-bash"># 1. Проверить что все сервисы живы
+systemctl --failed
+
+# 2. Если пусто — всё ок. Если что-то красное:
+# systemctl restart имя-сервиса
+
+# 3. tmux скорее всего пустой:
+tmux ls
+# "no server running on..." — это нормально
+
+# 4. Запустить рабочую сессию
+tmux new -s work</code></pre>
+
+  <div class="callout info">
+    <div class="callout-title">tmux vs systemd — когда что</div>
+    <p><strong>tmux</strong> — для интерактивной работы: Claude Code, Codex, ручные команды. Если отключитесь — сессия живёт, переподключитесь через <code>tmux attach</code>.</p>
+    <p><strong>systemd</strong> — для сервисов которые должны работать всегда: боты, веб-серверы, мониторинг. Переживают ребут, перезапускаются при падении.</p>
+    <p><strong>Простое правило:</strong> если вы сидите и работаете руками → tmux. Если процесс должен работать без вас 24/7 → systemd.</p>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">tmux-resurrect (для продвинутых)</div>
+    <p>Существует плагин <a href="https://github.com/tmux-plugins/tmux-resurrect" target="_blank">tmux-resurrect</a>, который сохраняет и восстанавливает tmux-сессии после ребута. Полезно, но для начала достаточно просто запускать <code>tmux new -s work</code> после подключения.</p>
+  </div>
+
+  <h2>Cron — планировщик задач</h2>
+  <p><strong>Cron</strong> — это будильник для сервера. Вы говорите: «каждый день в 3 ночи сделай бэкап» — он делает. Без вашего участия, даже когда вы спите.</p>
+
+  <h3>Формат расписания</h3>
+  <pre><code>┌───── минута (0-59)
+│ ┌──── час (0-23)
+│ │ ┌─── день месяца (1-31)
+│ │ │ ┌── месяц (1-12)
+│ │ │ │ ┌─ день недели (0-7, вс=0 или 7)
+│ │ │ │ │
+* * * * *  команда</code></pre>
+
+  <p><code>*</code> означает «каждый». То есть <code>* * * * *</code> — каждую минуту. <code>0 3 * * *</code> — каждый день в 3:00.</p>
+
+  <h3>Примеры (от простого к сложному)</h3>
+  <pre><code class="language-bash"># Каждую минуту — тест что cron работает
+* * * * * echo "$(date): alive" >> /tmp/cron-test.log
+
+# Каждый день в 3:00 — обновления
+0 3 * * * apt update && apt upgrade -y >> /var/log/auto-upgrade.log 2>&1
+
+# Каждый день в 4:00 — бэкап рабочей директории
+0 4 * * * tar czf /root/backup-$(date +\%Y\%m\%d).tar.gz /opt/myproject/
+
+# Каждые 6 часов — проверка свободного места на диске
+0 */6 * * * df -h / >> /var/log/disk-usage.log
+
+# Каждое воскресенье в 5:00 — очистка старых бэкапов (оставить последние 5)
+0 5 * * 0 ls -t /root/backup-*.tar.gz | tail -n +6 | xargs -r rm</code></pre>
+
+  <h3>Как управлять</h3>
+  <pre><code class="language-bash"># Открыть редактор cron-задач
+crontab -e
+# (при первом запуске выберите nano — он проще)
+
+# Посмотреть текущие задачи
+crontab -l
+
+# Проверить что cron выполнял
+grep CRON /var/log/syslog | tail -10</code></pre>
+
+  <div class="callout warning">
+    <div class="callout-title">Частые ошибки</div>
+    <ul>
+      <li><strong>Забыли <code>2>&1</code></strong> — ошибки не попадут в лог, будете думать что всё работает</li>
+      <li><strong>Процент в дате:</strong> в crontab знак <code>%</code> — спецсимвол. Пишите <code>\%</code> вместо <code>%</code> (как в примере с бэкапом)</li>
+      <li><strong>Путь к программам:</strong> cron не знает ваш PATH. Используйте полные пути: <code>/usr/bin/python3</code> вместо <code>python3</code></li>
+    </ul>
+  </div>
+
+  <h3>Как это выглядит на реальном сервере</h3>
+  <p>Наш рабочий сервер выполняет по расписанию:</p>
+  <pre><code class="language-bash"># Каждый день в 4:00 — очистка кешей (npm, uv, claude debug)
+0 4 * * * rm -rf /root/.cache/uv/* /root/.npm/_npx /root/.local/share/pnpm/store/v3/tmp
+
+# Три раза в день — публикация дайджеста новостей
+0 1,5,9 * * * cd /opt/lifecoach && node scripts/clawdigest_tweet.cjs
+
+# Каждые 5 минут — автопостинг в Telegram-канал
+*/5 * * * * /opt/lifecoach/sys-adm-bot/venv/bin/python poster.py
+
+# По воскресеньям в 4:30 — ротация бэкапов (оставить 5 последних)
+30 4 * * 0 ls -t /root/.claude-mem/backups/*.db* | tail -n +6 | xargs -r rm</code></pre>
+
+  <div class="callout success">
+    <div class="callout-title">Попробуйте сами</div>
+    <p>Добавьте тестовую задачу: <code>crontab -e</code>, впишите строку <code>* * * * * echo "$(date): works" >> /tmp/cron-test.log</code>, сохраните. Через минуту проверьте: <code>cat /tmp/cron-test.log</code>. Видите строки? Cron работает. Не забудьте потом удалить тестовую строку.</p>
+  </div>
+
+  <h2>Полезные автоматизации для AI-сервера</h2>
+  <pre><code class="language-bash"># Мониторинг диска — предупреждение при заполнении >80%
+0 */6 * * * df / | awk 'NR==2 && $5+0 > 80 {print "DISK WARNING: "$5" used"}' >> /var/log/disk-alert.log
+
+# Git-бэкап vault каждый вечер в 22:00
+0 22 * * * cd /opt/myproject/vault && git add -A && git commit -m "auto-backup $(date +\%F)" && git push 2>&1 | tail -1 >> /var/log/vault-backup.log
+
+# Перезапуск бота если упал (каждые 10 минут)
+*/10 * * * * systemctl is-active --quiet mybot || systemctl restart mybot</code></pre>
 </section>
 
 </main>
