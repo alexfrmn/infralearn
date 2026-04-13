@@ -1952,7 +1952,7 @@ node -v</code></pre>
     <div class="link-card"><a href="https://termius.com/">Termius</a><p>SSH-клиент для подключения</p></div>
     <div class="link-card"><a href="https://exa.ai">Exa.ai</a><p>AI-поисковик, MCP-интеграция</p></div>
     <div class="link-card"><a href="https://obsidian.md/">Obsidian</a><p>База знаний</p></div>
-    <div class="link-card"><a href="https://pyyplbot.com/?refid=219787633">PYYPL</a><p>Виртуальная карта (США)</p></div>
+    <div class="link-card"><a href="https://pyyplbot.com/?refid=YOUR_TELEGRAM_ID">PYYPL</a><p>Виртуальная карта (США)</p></div>
     <div class="link-card"><a href="https://smsfast.pro/?ref=292105">SMSFast</a><p>Приём SMS при регистрации</p></div>
     <div class="link-card"><a href="https://github.com/slopus/murmur">Murmur</a><p>Межагентная коммуникация</p></div>
     <div class="link-card"><a href="https://t.me/ai_mind_set">AI Mindset</a><p>Telegram-канал</p></div>
@@ -2502,10 +2502,10 @@ grep CRON /var/log/syslog | tail -10</code></pre>
 0 4 * * * rm -rf /root/.cache/uv/* /root/.npm/_npx /root/.local/share/pnpm/store/v3/tmp
 
 # Три раза в день — публикация дайджеста новостей
-0 1,5,9 * * * cd /opt/lifecoach && node scripts/clawdigest_tweet.cjs
+0 1,5,9 * * * cd /opt/workspace && node scripts/your_script.cjs
 
 # Каждые 5 минут — автопостинг в Telegram-канал
-*/5 * * * * /opt/lifecoach/sys-adm-bot/venv/bin/python poster.py
+*/5 * * * * /opt/workspace/your-bot/venv/bin/python poster.py
 
 # По воскресеньям в 4:30 — ротация бэкапов (оставить 5 последних)
 30 4 * * 0 ls -t /root/.claude-mem/backups/*.db* | tail -n +6 | xargs -r rm</code></pre>
